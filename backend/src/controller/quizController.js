@@ -44,7 +44,7 @@ exports.createQuiz = async (req, res) => {
   try {
     const { title, description, questions, startAt, endAt, settings, pin } =
       req.body;
-
+    
     // Validate required
     if (
       !title ||
@@ -78,7 +78,7 @@ exports.createQuiz = async (req, res) => {
     const quizCode = await generateUniqueQuizCode();
 
     const quiz = await Quiz.create({
-      teacherId: req.user._id,
+      teacherId: req.user.id,
       title,
       description,
       questions,
@@ -156,16 +156,46 @@ exports.deleteQuiz = async (req, res) => {
 };
 
 // GET /api/v1/quizzes (teachers only)
+// exports.getQuizzes = async (req, res) => {
+//   try {
+//     // rahaf declares that NO NEED FOR MANUAL ROLE CHECK HERE ANYMORE! hooray!
+//     // The requireTeacher middleware already handled it
+//     // req.user.role is now guaranteed to be "teacher"
+
+//     const { published, activeOnly } = req.query;
+//     const now = new Date();
+
+//     let filter = { teacherId: req.user._id }; // Use req.user.id from JWT
+
+//     if (published !== undefined) {
+//       filter.published = published === "true";
+//     }
+
+//     if (activeOnly === "true") {
+//       filter.startAt = { $lte: now };
+//       filter.endAt = { $gte: now };
+//     }
+
+//     const quizzes = await Quiz.find(filter);
+//     res.json(quizzes);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+//no need to thank me 🥱 its wtv i dont be doing too much *shakes dreads*
 exports.getQuizzes = async (req, res) => {
   try {
-    // rahaf declares that NO NEED FOR MANUAL ROLE CHECK HERE ANYMORE! hooray!
-    // The requireTeacher middleware already handled it
-    // req.user.role is now guaranteed to be "teacher"
-
     const { published, activeOnly } = req.query;
     const now = new Date();
 
-    let filter = { teacherId: req.user._id }; // Use req.user.id from JWT
+    // Use either req.user.id or req.user._id for safety
+    const teacherId = req.user?.id;
+    if (!teacherId) {
+      return res.status(401).json({ error: "Invalid token (no user id)" });
+    }
+
+    let filter = { teacherId };
 
     if (published !== undefined) {
       filter.published = published === "true";
@@ -183,8 +213,6 @@ exports.getQuizzes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-//no need to thank me 🥱 its wtv i dont be doing too much *shakes dreads*
-
 // GET /api/v1/quizzes/:id
 exports.getQuizById = async (req, res) => {
   try {

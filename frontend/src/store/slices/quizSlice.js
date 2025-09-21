@@ -32,6 +32,7 @@ const quizSlice = createSlice({
       .addCase(fetchQuizzes.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
+        state.teacherQuizzes = action.payload;
       })
       .addCase(fetchQuizzes.rejected, (state, action) => {
         state.loading = false;
