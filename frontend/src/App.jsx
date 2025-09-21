@@ -12,7 +12,8 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentJoin from "./pages/student/StudentJoin";
 import AttemptContainer from "./pages/student/AttemptContainer";
 import NotFound from "./pages/NotFound";
-
+import GuestRoute from "./components/GuestRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 /* Components */
 import Navbar from "./components/QuizCard" /* temporary placeholder */;
 
@@ -27,25 +28,85 @@ export default function App() {
     <div className="min-h-screen bg-zinc-50">
       {/* replace placeholder import with real Navbar later */}
       <div className="max-w-6xl mx-auto">
+
+
         <Routes>
-          {/* <Route path="/" element={<Navigate to="/auth/login" replace />} /> */}
           <Route path="/" element={<Landing />} />
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
+          <Route path="/auth/login" element={<GuestRoute> <Login /> </GuestRoute>} />
+          <Route path="/auth/register" element={<GuestRoute><Register /></GuestRoute>} />
 
           {/* Teacher routes */}
-          <Route path="/teacher" element={<TeacherDashboard />} />
-          <Route path="/teacher/quizzes" element={<QuizList />} />
-          <Route path="/teacher/quizzes/new" element={<QuizForm />} />
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute role="teacher">
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/quizzes"
+          element={
+            <ProtectedRoute role="teacher">
+              <QuizList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/quizzes/new"
+          element={
+            <ProtectedRoute role="teacher">
+              <QuizForm />
+            </ProtectedRoute>
+          }
+        />
 
           {/* Student routes */}
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/join" element={<StudentJoin />} />
-          <Route path="/attempt/:quizId/start" element={<AttemptContainer />} />
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute role="student">
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/join"
+          element={
+            <ProtectedRoute role="student">
+              <StudentJoin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attempt/:quizId/start"
+          element={
+            <ProtectedRoute role="student">
+              <AttemptContainer />
+            </ProtectedRoute>
+          }
+        />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+
+
       </div>
     </div>
   );
 }
+
+
+
+/**
+ * Auth Flow Refactor — by Montaser
+ *
+ * We removed the old `AuthContext` (custom context + provider) 
+ * and replaced it fully with Redux for authentication state.
+ *
+ * - Auth state (user + token) now lives in `authSlice`.
+ * - Login & Register pages dispatch `loginUser` / `registerUser` thunks.
+ * - Token + user are persisted in `localStorage` inside the slice.
+ * - Logout uses `dispatch(logout())`, which clears Redux state + storage.
+ * - Navbar, dashboards, and protected routes all read from Redux (`state.auth`).
+ */

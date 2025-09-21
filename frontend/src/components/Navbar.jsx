@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 const Navbar = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
+    dispatch(logout()); // clears user + token from redux + localStorage
     navigate("/auth/login");
   };
 
@@ -30,16 +31,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link
-              to="/auth/login"
-              className="hover:underline transition"
-            >
+            <Link to="/auth/login" className="hover:underline transition">
               Login
             </Link>
-            <Link
-              to="/auth/register"
-              className="hover:underline transition"
-            >
+            <Link to="/auth/register" className="hover:underline transition">
               Register
             </Link>
           </>

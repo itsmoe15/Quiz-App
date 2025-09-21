@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../services/authService";
-import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../store/slices/authSlice";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -11,19 +11,22 @@ export default function Register() {
   const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
-      const res = await register({ name, email, password, role, studentId });
-      localStorage.setItem("token", res.token);
-      setUser(res.user);
+      const res = await dispatch(
+        registerUser({ name, email, password, role, studentId })
+      ).unwrap();
+
+      // ✅ Token & user already stored in Redux + localStorage via authSlice
       if (res.user.role === "teacher") navigate("/teacher");
       else navigate("/student");
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err || "Registration failed");
     }
   };
 

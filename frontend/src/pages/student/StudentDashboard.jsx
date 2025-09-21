@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudentQuizzes } from "../../store/slices/quizSlice";
 import QuizCard from "../../components/QuizCard";
-import { useAuth } from "../../context/AuthContext"; // 👈 import
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/slices/authSlice"; 
 
 export default function StudentDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user } = useSelector((state) => state.auth); 
 
   const studentQuizzes =
     useSelector((state) => state.quiz.studentQuizzes ?? []);
@@ -18,9 +18,8 @@ export default function StudentDashboard() {
   }, [dispatch]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    setUser(null);                    
-    navigate("/auth/login");          
+    dispatch(logout());
+    navigate("/auth/login");
   };
 
   return (

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTeacherQuizzes } from "../../store/slices/quizSlice";
 import QuizCard from "../../components/QuizCard";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";  
+import { logout } from "../../store/slices/authSlice";
 
 export default function TeacherDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user } = useSelector((state) => state.auth);
 
   const teacherQuizzes =
     useSelector((state) => state.quiz.teacherQuizzes ?? []);
@@ -18,9 +18,8 @@ export default function TeacherDashboard() {
   }, [dispatch]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    setUser(null);                    
-    navigate("/auth/login");          
+    dispatch(logout()); // <-- use Redux
+    navigate("/auth/login");
   };
 
   return (

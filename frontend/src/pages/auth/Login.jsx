@@ -1,26 +1,32 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
-import { useAuth } from "../../context/AuthContext";
+import { loginUser } from "../../store/slices/authSlice";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { _, loading } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
-      const res = await login({ email, password });
-      localStorage.setItem("token", res.token);
-      setUser(res.user);
-      if (res.user.role === "teacher") navigate("/teacher");
-      else navigate("/student");
+      const result = await dispatch(loginUser({ email, password })).unwrap();
+
+      // result contains { token, user }
+      if (result.user.role === "teacher") {
+        navigate("/teacher");
+      } else {
+        navigate("/student");
+      }
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err || "Login failed");
     }
   };
 
@@ -50,14 +56,12 @@ export default function Login() {
         />
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
-        
       </form>
-      
     </div>
-    
   );
 }
