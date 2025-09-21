@@ -47,7 +47,6 @@ export default function QuizForm() {
       setError("");
       try {
         const data = await getQuizById(id);
-        // API may return the quiz directly or { quiz, ... } depending on endpoint.
         const quiz = data.quiz ?? data;
 
         if (!mounted) return;
@@ -256,6 +255,12 @@ export default function QuizForm() {
       >
         {loading ? (id ? "Updating..." : "Creating...") : id ? "Update Quiz" : "Create Quiz"}
       </button>
+      <button
+        type="button"
+        onClick={() => navigate("/teacher")} className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded">
+        Cancel
+      </button>
+
     </div>
   );
 }

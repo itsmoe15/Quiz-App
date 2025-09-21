@@ -14,8 +14,9 @@ import AttemptContainer from "./pages/student/AttemptContainer";
 import NotFound from "./pages/NotFound";
 import GuestRoute from "./components/GuestRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TeacherQuizView from "./pages/teacher/TeacherQuizView";
 /* Components */
-import Navbar from "./components/QuizCard" /* temporary placeholder */;
+import Navbar from "./components/Navbar" /* temporary placeholder */;
 
 /* NOTE:
  - Navbar placeholder above references QuizCard to avoid runtime import error
@@ -26,9 +27,9 @@ import Navbar from "./components/QuizCard" /* temporary placeholder */;
 export default function App() {
   return (
     <div className="min-h-screen bg-zinc-50">
+      <Navbar />
       {/* replace placeholder import with real Navbar later */}
       <div className="max-w-6xl mx-auto">
-
 
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/auth/register" element={<GuestRoute><Register /></GuestRoute>} />
 
           {/* Teacher routes */}
+          
         <Route
           path="/teacher"
           element={
@@ -44,6 +46,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/teacher/quizzes"
           element={
@@ -52,6 +55,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/teacher/quizzes/new"
           element={
@@ -60,6 +64,25 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/teacher/quiz/:id"
+          element={
+            <ProtectedRoute role="teacher">
+              <TeacherQuizView />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/quizzes/:id/edit"
+          element={
+            <ProtectedRoute role="teacher">
+              <QuizForm />
+            </ProtectedRoute>
+          }
+        />
+
 
           {/* Student routes */}
         <Route

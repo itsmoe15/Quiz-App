@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getUser, updateUser } from "../../services/authService";
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const [_, setUser] = useState(null);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -49,4 +49,3 @@ export default function Profile() {
     </div>
   );
 }
-نعم

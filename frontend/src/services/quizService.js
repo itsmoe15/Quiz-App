@@ -5,8 +5,8 @@ export const createQuiz = async (quiz) => {
   return res.data;
 };
 
-export const updateQuiz = async (id, updates) => {
-  const res = await api.patch(`/quizzes/${id}`, updates);
+export const updateQuiz = async (id, quizData) => {
+  const res = await api.patch(`/quizzes/${id}`, quizData);
   return res.data;
 };
 

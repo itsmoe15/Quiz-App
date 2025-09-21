@@ -17,7 +17,7 @@ async function generateUniqueQuizCode() {
 
   while (exists) {
     code = nanoid();
-    exists = await Quiz.findOne({ quizCode: code }); //since shit happen, we check if the code already exist for a diffrent quiz 🦦
+    exists = await Quiz.findOne({ quizCode: code }); 
   }
 
   return code;
@@ -102,7 +102,7 @@ exports.createQuiz = async (req, res) => {
 // PATCH /api/v1/quizzes/:id
 exports.updateQuiz = async (req, res) => {
   try {
-    const quiz = await verifyTeacherOwnership(req.user._id, req.params.id);
+    const quiz = await verifyTeacherOwnership(req.user.id, req.params.id);
 
     const { title, description, questions, startAt, endAt, settings, pin } =
       req.body;
@@ -146,7 +146,7 @@ exports.updateQuiz = async (req, res) => {
 // DELETE /api/v1/quizzes/:id
 exports.deleteQuiz = async (req, res) => {
   try {
-    const quiz = await verifyTeacherOwnership(req.user._id, req.params.id);
+    const quiz = await verifyTeacherOwnership(req.user.id, req.params.id);
     await quiz.deleteOne();
     res.json({ message: "Quiz deleted successfully" });
   } catch (err) {
@@ -155,41 +155,12 @@ exports.deleteQuiz = async (req, res) => {
   }
 };
 
-// GET /api/v1/quizzes (teachers only)
-// exports.getQuizzes = async (req, res) => {
-//   try {
-//     // rahaf declares that NO NEED FOR MANUAL ROLE CHECK HERE ANYMORE! hooray!
-//     // The requireTeacher middleware already handled it
-//     // req.user.role is now guaranteed to be "teacher"
 
-//     const { published, activeOnly } = req.query;
-//     const now = new Date();
-
-//     let filter = { teacherId: req.user._id }; // Use req.user.id from JWT
-
-//     if (published !== undefined) {
-//       filter.published = published === "true";
-//     }
-
-//     if (activeOnly === "true") {
-//       filter.startAt = { $lte: now };
-//       filter.endAt = { $gte: now };
-//     }
-
-//     const quizzes = await Quiz.find(filter);
-//     res.json(quizzes);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-//no need to thank me 🥱 its wtv i dont be doing too much *shakes dreads*
 exports.getQuizzes = async (req, res) => {
   try {
     const { published, activeOnly } = req.query;
     const now = new Date();
 
-    // Use either req.user.id or req.user._id for safety
     const teacherId = req.user?.id;
     if (!teacherId) {
       return res.status(401).json({ error: "Invalid token (no user id)" });
@@ -250,7 +221,7 @@ exports.getQuizById = async (req, res) => {
 // POST /api/v1/quizzes/:id/publish <- to publish a quiz
 exports.publishQuiz = async (req, res) => {
   try {
-    const quiz = await verifyTeacherOwnership(req.user._id, req.params.id);
+    const quiz = await verifyTeacherOwnership(req.user.id, req.params.id);
     quiz.published = true;
     await quiz.save();
     res.json({ message: "Quiz published", quiz });

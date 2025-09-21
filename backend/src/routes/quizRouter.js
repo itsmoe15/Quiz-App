@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const quizController = require("../controller/quizController");
-const { requireAuth, requireTeacher } = require("../middleware/auth"); // uncomment this when rahaf actually makes the middleware, excuse me? 😭
+const { requireAuth, requireTeacher } = require("../middleware/auth"); 
 
 router.post("/", requireAuth, requireTeacher, quizController.createQuiz);
 router.patch("/:id", requireAuth, requireTeacher, quizController.updateQuiz);
