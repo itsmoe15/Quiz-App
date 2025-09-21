@@ -40,7 +40,11 @@ const quizSchema = new Schema({
     },
     negativeForWrong: { type: Boolean, default: false },
     maxConfidencePoints: Number
-  }
+  },
+  joinUrl: { type: String }, // M&M: fml how didnt i add this before
+  // M&M: rahaf u can add accuracy and other stuff here but make them
+  //      in an object called "statistics" or something
 });
+
 
 module.exports = mongoose.model('Quiz', quizSchema);

@@ -76,6 +76,7 @@ exports.createQuiz = async (req, res) => {
     }
 
     const quizCode = await generateUniqueQuizCode();
+    const joinUrl = `${process.env.FRONTEND_URL}/q/${quizCode}`;
 
     const quiz = await Quiz.create({
       teacherId: req.user.id,
@@ -87,17 +88,19 @@ exports.createQuiz = async (req, res) => {
       startAt,
       endAt,
       settings,
+      joinUrl, // M&M: shove it in the db too why not (this is used to show the link in the teacher edit form, not to fetch the quiz from the db im not this stupid)
     });
 
     res.status(201).json({
       quiz,
-      joinUrl: `${process.env.FRONTEND_URL}/q/${quiz.quizCode}`,
+      joinUrl, // M&M: idk if its used somewhere and im lazy to check, so we will still return separately for compatibility
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // PATCH /api/v1/quizzes/:id
 exports.updateQuiz = async (req, res) => {

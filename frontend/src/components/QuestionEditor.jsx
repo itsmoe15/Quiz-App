@@ -2,7 +2,6 @@ import { useState } from "react";
 import LatexRenderer from "./LatexRenderer";
 
 export default function QuestionEditor({ questions, setQuestions }) {
-  // previewIndex holds the index of the question currently previewing (or null)
   const [previewIndex, setPreviewIndex] = useState(null);
 
   const addQuestion = () => {
@@ -35,7 +34,7 @@ export default function QuestionEditor({ questions, setQuestions }) {
 
   const addOption = (qIndex) => {
     const newQuestions = [...questions];
-    const nextId = String.fromCharCode(97 + newQuestions[qIndex].options.length); // a, b, c, d...
+    const nextId = String.fromCharCode(97 + newQuestions[qIndex].options.length); 
     newQuestions[qIndex].options.push({ id: nextId, text: "" });
     setQuestions(newQuestions);
   };
