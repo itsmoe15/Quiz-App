@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-/* Pages (we will add these files in next batches) */
 import Landing from "./pages/Landing";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -16,29 +15,32 @@ import JoinQuizPage from "./pages/JoinQuizPage";
 import PublicAttemptPlayer from "./pages/PublicAttemptPlayer";
 import AttemptResultPage from "./pages/AttemptResultPage";
 import TeacherAttemptsPage from "./pages/TeacherAttemptsPage";
+import Navbar from "./components/Navbar";
 
-/* Components */
-import Navbar from "./components/Navbar" /* temporary placeholder */;
+/*
+        to say this code is more polluted than chernobyl would be an understatement
+        we have component files that are over 300 lines long
+        and half of them arent even used no more
 
-/* NOTE:
- - Navbar placeholder above references QuizCard to avoid runtime import error
-   until you paste the real Navbar component. Replace with:
-     import Navbar from "./components/Navbar";
+        its 4:55am and wakatime tells me i spent 14 hours and 26 mins acitvley coding on this project
+        so if u see any stupid mistakes (its most likely not mine) but if it was, forgive me
+
+        sorry in advance
+    - Montaser
 */
 
 export default function App() {
   return (
     <div className="min-h-screen bg-zinc-50">
       <Navbar />
-      {/* replace placeholder import with real Navbar later */}
       <div className="max-w-6xl mx-auto">
 
         <Routes>
+          {/* <Route path="/" element={<Login />} /> why on god`s green earth would anyuone do that you absolute buffoons???????? */}
           <Route path="/" element={<Landing />} />
           <Route path="/auth/login" element={<GuestRoute> <Login /> </GuestRoute>} />
           <Route path="/auth/register" element={<GuestRoute><Register /></GuestRoute>} />
 
-          {/* Teacher routes */}
 
         <Route
           path="/teacher"

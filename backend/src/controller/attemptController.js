@@ -1,3 +1,18 @@
+/*
+  this file is a shit show
+
+  anyway, all endpoints that have a public view 
+  variant are safe to be deleted except for:
+  // GET /api/v1/quizzes/:quizId/attempts <- which is used to get the quiz attempts for the teacher
+
+  and safe to delete here means its not being activly used by the frontend 
+  however it will break the backend so u need to swiftly remove the code and 
+  handle where its mentioned in other files, however its not actively used by
+  the frontend so it should be fine beside some reference errors so i will 
+  remove them and clean this file up later on
+- M&M
+*/
+
 const Attempt = require("../model/attemptModel");
 const Quiz = require("../model/quizModel");
 const mongoose = require("mongoose");
@@ -190,7 +205,7 @@ exports.getAttemptById = async (req, res) => {
   }
 };
 
-// GET /api/v1/quizzes/:quizId/attempts <- pretty clear what this one is used for
+// GET /api/v1/quizzes/:quizId/attempts <- pretty clear what this one is used for 
 exports.getAttemptsForQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
