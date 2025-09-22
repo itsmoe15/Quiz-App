@@ -15,6 +15,11 @@ import NotFound from "./pages/NotFound";
 import GuestRoute from "./components/GuestRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TeacherQuizView from "./pages/teacher/TeacherQuizView";
+import JoinQuizPage from "./pages/JoinQuizPage";
+import PublicAttemptPlayer from "./pages/PublicAttemptPlayer";
+import AttemptResultPage from "./pages/AttemptResultPage";
+import TeacherAttemptsPage from "./pages/TeacherAttemptsPage";
+
 /* Components */
 import Navbar from "./components/Navbar" /* temporary placeholder */;
 
@@ -37,7 +42,7 @@ export default function App() {
           <Route path="/auth/register" element={<GuestRoute><Register /></GuestRoute>} />
 
           {/* Teacher routes */}
-          
+
         <Route
           path="/teacher"
           element={
@@ -83,6 +88,14 @@ export default function App() {
           }
         />
 
+        <Route
+          path="/teacher/quizzes/:quizId/attempts"
+          element={
+            <ProtectedRoute role="teacher">
+              <TeacherAttemptsPage />
+            </ProtectedRoute>
+          }
+        />
 
           {/* Student routes */}
         <Route
@@ -111,6 +124,10 @@ export default function App() {
         />
 
           <Route path="*" element={<NotFound />} />
+          <Route path="/q/:quizCode" element={<JoinQuizPage />} />
+          <Route path="/q/:quizCode/attempt/:attemptId" element={<PublicAttemptPlayer />} />
+          <Route path="/attempts/:attemptId" element={<AttemptResultPage />} />
+
         </Routes>
 
 

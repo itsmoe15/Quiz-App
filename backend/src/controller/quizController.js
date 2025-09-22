@@ -251,3 +251,64 @@ exports.validatePin = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.validatePin = async (req, res) => {
+  try {
+    const { quizCode, pin } = req.body;
+    if (!quizCode) return res.status(400).json({ error: "quizCode required" });
+
+    const quiz = await Quiz.findOne({ quizCode });
+    if (!quiz) return res.status(404).json({ error: "Quiz not found" });
+
+    // If quiz has a pin, ensure equality (coerce both to string, trim)
+    if (quiz.pin) {
+      const stored = String(quiz.pin).trim();
+      const provided = typeof pin === "undefined" || pin === null ? "" : String(pin).trim();
+
+      if (stored !== provided) {
+        return res.status(403).json({ error: "Incorrect PIN" });
+      }
+    }
+
+    // return meta so frontend can use published/startAt info
+    res.json({
+      valid: true,
+      quizId: quiz._id,
+      published: !!quiz.published,
+      startAt: quiz.startAt,
+      endAt: quiz.endAt,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/v1/quizzes/public/:quizCode <- returns small public metadata 
+exports.getPublicQuiz = async (req, res) => {
+  try {
+    const { quizCode } = req.params;
+    if (!quizCode) return res.status(400).json({ error: "quizCode required" });
+
+    const quiz = await Quiz.findOne({ quizCode }).select(
+      "title description quizCode pin published startAt endAt createdAt quizCode joinUrl"
+    );
+    if (!quiz) return res.status(404).json({ error: "Quiz not found" });
+
+    res.json({
+      _id: quiz._id,
+      title: quiz.title,
+      description: quiz.description,
+      quizCode: quiz.quizCode,
+      pinRequired: !!quiz.pin,
+      published: !!quiz.published,
+      startAt: quiz.startAt,
+      endAt: quiz.endAt,
+      joinUrl: quiz.joinUrl,
+      createdAt: quiz.createdAt,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};

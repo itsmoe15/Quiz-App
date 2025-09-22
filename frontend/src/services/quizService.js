@@ -34,3 +34,8 @@ export const validatePin = async (data) => {
   const res = await api.post("/quizzes/validate-pin", data);
   return res.data;
 };
+
+export const getPublicQuiz = async (quizCode) => {
+  const res = await api.get(`/quizzes/public/${quizCode}`);
+  return res.data;
+};

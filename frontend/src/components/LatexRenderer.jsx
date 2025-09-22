@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */ //https://www.instagram.com/p/DOs22GJE_RF/
 
 import katex from "katex";
 import "katex/dist/katex.min.css";

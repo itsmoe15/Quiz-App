@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getQuizById, deleteQuiz } from "../../services/quizService";
+import { getQuizById, deleteQuiz, publishQuiz } from "../../services/quizService";
 import LatexRenderer from "../../components/LatexRenderer";
 
 export default function TeacherQuizView() {
@@ -10,6 +10,7 @@ export default function TeacherQuizView() {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [publishing, setPublishing] = useState(false);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this quiz? This action cannot be undone.")) {
@@ -24,6 +25,29 @@ export default function TeacherQuizView() {
     }
   };
 
+  const handlePublish = async () => {
+    if (!quiz?._id) return;
+    if (!window.confirm("Publish this quiz? Students will be able to join it.")) return;
+
+    try {
+      setPublishing(true);
+      const res = await publishQuiz(quiz._id); // expects { message, quiz }
+      if (res && res.quiz) {
+        setQuiz(res.quiz);
+        alert(res.message || "Quiz published");
+      } else {
+        setQuiz((q) => ({ ...q, published: true }));
+        alert("Quiz published");
+      }
+    } catch (err) {
+      console.error("Publish failed:", err);
+      const msg = err?.response?.data?.error || err?.message || "Publish failed";
+      alert(msg);
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
     let mounted = true;
@@ -33,9 +57,8 @@ export default function TeacherQuizView() {
     (async () => {
       try {
         const res = await getQuizById(id);
-        const payload = res;
         if (!mounted) return;
-        setQuiz(payload);
+        setQuiz(res);
       } catch (err) {
         console.error(err);
         setError(err?.response?.data?.error || err?.message || "Failed to load quiz.");
@@ -103,6 +126,24 @@ export default function TeacherQuizView() {
           >
             Edit Quiz
           </button>
+
+          {/* show publish button only if unpublished */}
+          {!quiz.published && (
+            <button
+              onClick={handlePublish}
+              disabled={publishing}
+              className="px-3 py-1 bg-indigo-600 text-white rounded"
+            >
+              {publishing ? "Publishing..." : "Publish"}
+            </button>
+          )}
+          <button
+            onClick={() => navigate(`/teacher/quizzes/${quiz._id}/attempts`)}
+            className="px-3 py-1 bg-gray-700 text-white rounded"
+          >
+            View Answers
+          </button>
+
           <button
             onClick={handleDelete}
             className="px-3 py-1 bg-red-500 text-white rounded"

@@ -15,6 +15,8 @@ router.post(
 
 router.get("/", requireAuth, requireTeacher, quizController.getQuizzes);
 router.get("/:id", requireAuth, quizController.getQuizById);
+router.get("/public/:quizCode", quizController.getPublicQuiz);
+router.post("/validate-pin", quizController.validatePin);
 
 router.post("/validate-pin", quizController.validatePin);
 
