@@ -7,8 +7,6 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
-  const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,10 +17,9 @@ export default function Register() {
 
     try {
       const res = await dispatch(
-        registerUser({ name, email, password, role, studentId })
+        registerUser({ name, email, password, role: "teacher" })
       ).unwrap();
 
-      // ✅ Token & user already stored in Redux + localStorage via authSlice
       if (res.user.role === "teacher") navigate("/teacher");
       else navigate("/student");
     } catch (err) {
@@ -62,23 +59,7 @@ export default function Register() {
           className="w-full p-2 mb-4 border rounded"
           required
         />
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
-        >
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
-        {role === "student" && (
-          <input
-            type="text"
-            placeholder="Student ID"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            className="w-full p-2 mb-4 border rounded"
-          />
-        )}
+
         <button
           type="submit"
           className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"

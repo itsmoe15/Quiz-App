@@ -8,9 +8,6 @@ import Register from "./pages/auth/Register";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import QuizList from "./pages/teacher/QuizList";
 import QuizForm from "./pages/teacher/QuizForm";
-import StudentDashboard from "./pages/student/StudentDashboard";
-import StudentJoin from "./pages/student/StudentJoin";
-import AttemptContainer from "./pages/student/AttemptContainer";
 import NotFound from "./pages/NotFound";
 import GuestRoute from "./components/GuestRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -93,32 +90,6 @@ export default function App() {
           element={
             <ProtectedRoute role="teacher">
               <TeacherAttemptsPage />
-            </ProtectedRoute>
-          }
-        />
-
-          {/* Student routes */}
-        <Route
-          path="/student"
-          element={
-            <ProtectedRoute role="student">
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/join"
-          element={
-            <ProtectedRoute role="student">
-              <StudentJoin />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/attempt/:quizId/start"
-          element={
-            <ProtectedRoute role="student">
-              <AttemptContainer />
             </ProtectedRoute>
           }
         />
