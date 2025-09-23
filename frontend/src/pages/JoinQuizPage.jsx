@@ -1,4 +1,3 @@
-// frontend/src/pages/JoinQuizPage.jsx
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { startPublicAttempt } from "../services/attemptService";
@@ -10,7 +9,9 @@ function formatRemaining(ms) {
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(
+    s
+  ).padStart(2, "0")}`;
 }
 
 export default function JoinQuizPage() {
@@ -48,7 +49,11 @@ export default function JoinQuizPage() {
         }
       } catch (err) {
         console.error(err);
-        setError(err?.response?.data?.error || err?.message || "Failed to load quiz info");
+        setError(
+          err?.response?.data?.error ||
+            err?.message ||
+            "Failed to load quiz info"
+        );
       }
     })();
     return () => {
@@ -62,19 +67,18 @@ export default function JoinQuizPage() {
     setError("");
     setLoading(true);
     try {
-      // optional pre-validate pin for faster UX
       if (quizMeta?.pinRequired) {
         try {
           await validatePin({ quizCode, pin });
         } catch (err) {
-          const msg = err?.response?.data?.error || err?.message || "Invalid PIN";
+          const msg =
+            err?.response?.data?.error || err?.message || "Invalid PIN";
           setError(msg);
           setLoading(false);
           return;
         }
       }
 
-      // ensure published + not before start (server also checks, this is UX)
       if (!quizMeta?.published) {
         setError("Quiz is not published yet.");
         setLoading(false);
@@ -110,7 +114,8 @@ export default function JoinQuizPage() {
       navigate(`/q/${quizCode}/attempt/${res.attemptId}`);
     } catch (err) {
       console.error(err);
-      const msg = err?.response?.data?.error || err?.message || "Failed to start quiz";
+      const msg =
+        err?.response?.data?.error || err?.message || "Failed to start quiz";
       setError(msg);
     } finally {
       setLoading(false);
@@ -118,63 +123,173 @@ export default function JoinQuizPage() {
   };
 
   if (error && !quizMeta) {
-    return <div className="p-6 text-red-600">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 text-center max-w-md mx-4">
+          <div className="text-6xl mb-4">❌</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-zinc-100">
-      <form onSubmit={handleStart} className="bg-white p-6 rounded shadow-md w-full max-w-md">
-        {/* <h2 className="text-xl font-bold mb-4">Join Quiz: {quizCode}</h2> this shit is ugly the title is better but imma keep this here for reference */}
-        <h2 className="text-xl font-bold mb-4">
-            {quizMeta ? quizMeta.title : "Loading quiz..."}
-        </h2>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-green-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
+      </div>
 
+      <form
+        onSubmit={handleStart}
+        className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/30 p-8 w-full max-w-md relative z-10"
+      >
+        {/* Quiz Header */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <span className="text-2xl text-white font-bold">Q</span>
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+            {quizMeta ? quizMeta.title : "Loading..."}
+          </h2>
+          <p className="text-gray-600 text-sm">
+            Quiz Code: <span className="font-mono font-bold">{quizCode}</span>
+          </p>
+        </div>
 
         {quizMeta && (
-          <>
-            <p className="text-sm text-gray-600 mb-2">Join Quiz: {quizCode}</p>
-            <p className="text-xs text-gray-500 mb-3">
-              Status: <span className="font-medium">{quizMeta.published ? "Published" : "Unpublished"}</span>
-            </p>
+          <div className="space-y-3 mb-6">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-600">Status:</span>
+              <span
+                className={`font-semibold ${
+                  quizMeta.published ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {quizMeta.published ? "Ready to Play" : "Not Published"}
+              </span>
+            </div>
 
-            {quizMeta.published && quizMeta.startAt && new Date(quizMeta.startAt) > new Date() && (
-              <div className="mb-3 p-3 bg-yellow-50 border rounded text-sm">
-                Quiz starts at: {new Date(quizMeta.startAt).toLocaleString()} — starting in {formatRemaining(remaining)}
-              </div>
-            )}
+            {quizMeta.published &&
+              quizMeta.startAt &&
+              new Date(quizMeta.startAt) > new Date() && (
+                <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
+                  <div className="text-yellow-800 font-semibold text-sm mb-1">
+                    Starts In
+                  </div>
+                  <div className="text-2xl font-bold text-yellow-600 font-mono">
+                    {formatRemaining(remaining)}
+                  </div>
+                  <div className="text-yellow-600 text-xs mt-1">
+                    {new Date(quizMeta.startAt).toLocaleString()}
+                  </div>
+                </div>
+              )}
 
             {!quizMeta.published && (
-              <div className="mb-3 p-3 bg-red-50 border rounded text-sm">
-                Quiz is not published yet. You cannot start this quiz.
+              <div className="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+                <div className="text-red-600 font-semibold">
+                  Quiz Not Available
+                </div>
+                <div className="text-red-500 text-sm">
+                  Wait for teacher to publish
+                </div>
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {error && <div className="mb-3 text-red-600">{error}</div>}
-
-        <label className="block mb-1">Name</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 mb-3 border rounded" required />
-
-        <label className="block mb-1">Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 mb-3 border rounded" required />
-
-        <label className="block mb-1">Student ID</label>
-        <input value={studentId} onChange={(e) => setStudentId(e.target.value)} className="w-full p-2 mb-3 border rounded" />
-
-        {quizMeta?.pinRequired && (
-          <>
-            <label className="block mb-1">PIN</label>
-            <input value={pin} onChange={(e) => setPin(e.target.value)} className="w-full p-2 mb-3 border rounded" />
-          </>
+        {error && (
+          <div className="bg-red-100 border border-red-300 text-red-600 px-4 py-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
         )}
 
+        {/* Player Info Form */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Your Name
+            </label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Student ID (Optional)
+            </label>
+            <input
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+              placeholder="Enter student ID"
+            />
+          </div>
+
+          {quizMeta?.pinRequired && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Quiz PIN
+              </label>
+              <input
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                placeholder="Enter PIN code"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Start Button */}
         <button
-          disabled={loading || !quizMeta || !quizMeta.published || (quizMeta.startAt && new Date(quizMeta.startAt) > new Date())}
-          className="w-full bg-green-500 text-white py-2 rounded disabled:opacity-60"
+          disabled={
+            loading ||
+            !quizMeta ||
+            !quizMeta.published ||
+            (quizMeta.startAt && new Date(quizMeta.startAt) > new Date())
+          }
+          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-6"
         >
-          {loading ? "Starting..." : "Start Quiz"}
+          {loading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Starting Quiz...
+            </div>
+          ) : (
+            "🎮 Start Quiz"
+          )}
         </button>
+
+        {/* footer */}
+        <div className="text-center mt-4">
+          <p className="text-xs text-gray-500">
+            Get ready to test your knowledge!
+          </p>
+        </div>
       </form>
     </div>
   );

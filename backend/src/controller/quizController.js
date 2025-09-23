@@ -17,7 +17,7 @@ async function generateUniqueQuizCode() {
 
   while (exists) {
     code = nanoid();
-    exists = await Quiz.findOne({ quizCode: code }); 
+    exists = await Quiz.findOne({ quizCode: code });
   }
 
   return code;
@@ -44,7 +44,7 @@ exports.createQuiz = async (req, res) => {
   try {
     const { title, description, questions, startAt, endAt, settings, pin } =
       req.body;
-    
+
     // Validate required
     if (
       !title ||
@@ -101,7 +101,6 @@ exports.createQuiz = async (req, res) => {
   }
 };
 
-
 // PATCH /api/v1/quizzes/:id
 exports.updateQuiz = async (req, res) => {
   try {
@@ -157,7 +156,6 @@ exports.deleteQuiz = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 exports.getQuizzes = async (req, res) => {
   try {
@@ -263,7 +261,8 @@ exports.validatePin = async (req, res) => {
     // If quiz has a pin, ensure equality (coerce both to string, trim)
     if (quiz.pin) {
       const stored = String(quiz.pin).trim();
-      const provided = typeof pin === "undefined" || pin === null ? "" : String(pin).trim();
+      const provided =
+        typeof pin === "undefined" || pin === null ? "" : String(pin).trim();
 
       if (stored !== provided) {
         return res.status(403).json({ error: "Incorrect PIN" });
@@ -284,7 +283,7 @@ exports.validatePin = async (req, res) => {
   }
 };
 
-// GET /api/v1/quizzes/public/:quizCode <- returns small public metadata 
+// GET /api/v1/quizzes/public/:quizCode <- returns small public metadata
 exports.getPublicQuiz = async (req, res) => {
   try {
     const { quizCode } = req.params;

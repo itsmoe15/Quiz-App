@@ -26,8 +26,8 @@ export default function QuizForm() {
   const [description, setDescription] = useState("");
   const [questions, setQuestions] = useState([]);
   const [pin, setPin] = useState("");
-  const [startAt, setStartAt] = useState(""); // datetime-local string
-  const [endAt, setEndAt] = useState(""); // datetime-local string
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
   const [settings, setSettings] = useState({
     scoringMode: "confidence_absolute",
     negativeForWrong: false,
@@ -54,7 +54,6 @@ export default function QuizForm() {
         setDescription(quiz.description || "");
         setQuestions(Array.isArray(quiz.questions) ? quiz.questions : []);
         setPin(quiz.pin || "");
-
         setStartAt(quiz.startAt ? toLocalInput(quiz.startAt) : "");
         setEndAt(quiz.endAt ? toLocalInput(quiz.endAt) : "");
         setSettings(quiz.settings || settings);
@@ -74,8 +73,7 @@ export default function QuizForm() {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, settings]);
 
   function validateBeforeSend() {
     if (!title.trim()) {
@@ -87,7 +85,6 @@ export default function QuizForm() {
       return false;
     }
 
-    // Basic question-level validation (can expand)
     for (const [idx, q] of questions.entries()) {
       if (!q.type || !q.prompt) {
         setError(`Question ${idx + 1} is missing type or prompt.`);
@@ -103,7 +100,6 @@ export default function QuizForm() {
           return false;
         }
       }
-      // numeric/short can also be validated if needed
     }
 
     return true;
@@ -115,7 +111,6 @@ export default function QuizForm() {
 
     setLoading(true);
     try {
-      // Convert datetime-local to ISO strings (or undefined if empty)
       const payload = {
         title,
         description,
@@ -144,123 +139,200 @@ export default function QuizForm() {
   };
 
   return (
-    <div className="p-6 max-w-3xl">
-      <h2 className="text-xl font-bold mb-4">{id ? "Edit Quiz" : "Create Quiz"}</h2>
-
-      {error && (
-        <div className="mb-4 text-red-600 bg-red-100 p-3 rounded">{error}</div>
-      )}
-
-      <div className="mb-3">
-        <label className="block mb-1">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-3">
-        <label className="block mb-1">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <QuestionEditor questions={questions} setQuestions={setQuestions} />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-        <div>
-          <label className="block mb-1">Start (optional)</label>
-          <input
-            type="datetime-local"
-            value={startAt}
-            onChange={(e) => setStartAt(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50 py-6">
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Header */}
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-8 mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+            {id ? "Edit Quiz" : "Create New Quiz"}
+          </h1>
+          <p className="text-gray-600">
+            {id
+              ? "Update your quiz details and questions"
+              : "Create a new quiz for your students"}
+          </p>
         </div>
-        <div>
-          <label className="block mb-1">End (optional)</label>
-          <input
-            type="datetime-local"
-            value={endAt}
-            onChange={(e) => setEndAt(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Basic Information */}
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-8 mb-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">
+            Quiz Information
+          </h2>
+
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Quiz Title
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+                placeholder="Enter quiz title"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50 h-24 resize-vertical"
+                placeholder="Enter quiz description"
+              />
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-3">
-        <label className="block mb-1">PIN (optional)</label>
-        <input
-          type="text"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
+        {/* Questions Section */}
+        <QuestionEditor questions={questions} setQuestions={setQuestions} />
 
-      {/* Basic settings UI — expand if you want */}
-      <div className="mb-3 p-3 border rounded">
-        <label className="block mb-1 font-medium">Settings</label>
-        <div className="flex items-center gap-3 mb-2">
-          <label>Scoring mode</label>
-          <select
-            value={settings.scoringMode}
-            onChange={(e) =>
-              setSettings((s) => ({ ...s, scoringMode: e.target.value }))
-            }
-            className="p-1 border rounded"
+        {/* Schedule & Settings */}
+        <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-8 mb-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">
+            Schedule & Settings
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Start Time (optional)
+              </label>
+              <input
+                type="datetime-local"
+                value={startAt}
+                onChange={(e) => setStartAt(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                End Time (optional)
+              </label>
+              <input
+                type="datetime-local"
+                value={endAt}
+                onChange={(e) => setEndAt(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              PIN (optional)
+            </label>
+            <input
+              type="text"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+              placeholder="Enter access PIN"
+            />
+          </div>
+
+          {/* Settings */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Scoring Settings
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Scoring Mode
+                </label>
+                <select
+                  value={settings.scoringMode}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, scoringMode: e.target.value }))
+                  }
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+                >
+                  <option value="confidence_absolute">
+                    Confidence Absolute
+                  </option>
+                  <option value="confidence_scaled">Confidence Scaled</option>
+                  <option value="binary">Binary</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Max Confidence Points
+                </label>
+                <input
+                  type="number"
+                  value={settings.maxConfidencePoints ?? ""}
+                  onChange={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      maxConfidencePoints: e.target.value
+                        ? Number(e.target.value)
+                        : undefined,
+                    }))
+                  }
+                  className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 bg-white/50"
+                  min="1"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 mt-4 p-3 bg-gray-50 rounded-lg">
+              <input
+                type="checkbox"
+                checked={!!settings.negativeForWrong}
+                onChange={(e) =>
+                  setSettings((s) => ({
+                    ...s,
+                    negativeForWrong: e.target.checked,
+                  }))
+                }
+                className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+              />
+              <label className="text-sm font-medium text-gray-700">
+                Enable negative points for wrong answers
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-4 justify-center">
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <option value="confidence_absolute">confidence_absolute</option>
-            <option value="confidence_scaled">confidence_scaled</option>
-            <option value="binary">binary</option>
-          </select>
-        </div>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {id ? "Updating..." : "Creating..."}
+              </div>
+            ) : id ? (
+              "Update Quiz"
+            ) : (
+              "Create Quiz"
+            )}
+          </button>
 
-        <div className="flex items-center gap-3 mb-2">
-          <label>Negative for wrong</label>
-          <input
-            type="checkbox"
-            checked={!!settings.negativeForWrong}
-            onChange={(e) =>
-              setSettings((s) => ({ ...s, negativeForWrong: e.target.checked }))
-            }
-          />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <label>Max confidence points</label>
-          <input
-            type="number"
-            value={settings.maxConfidencePoints ?? ""}
-            onChange={(e) =>
-              setSettings((s) => ({
-                ...s,
-                maxConfidencePoints: e.target.value ? Number(e.target.value) : undefined,
-              }))
-            }
-            className="p-1 border rounded w-24"
-          />
+          <button
+            type="button"
+            onClick={() => navigate("/teacher")}
+            className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
+          >
+            Cancel
+          </button>
         </div>
       </div>
-
-      <button
-        onClick={handleSave}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        {loading ? (id ? "Updating..." : "Creating...") : id ? "Update Quiz" : "Create Quiz"}
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate("/teacher")} className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded">
-        Cancel
-      </button>
-
     </div>
   );
 }

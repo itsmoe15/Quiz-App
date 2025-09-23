@@ -16,7 +16,7 @@
 const Attempt = require("../model/attemptModel");
 const Quiz = require("../model/quizModel");
 const mongoose = require("mongoose");
-const User = require("../model/userModel")
+const User = require("../model/userModel");
 const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
 // -------------------- simple scoring 3: --------------------
 
@@ -44,7 +44,7 @@ function calculateScoreForAnswer(question, answer, settings) {
   } else if (settings.scoringMode === "binary") {
     pointsAwarded = isCorrect ? question.points : 0;
   }
-  // yassmin will make more
+  // yassmin will make more (funny)
 
   return { isCorrect, pointsAwarded };
 }
@@ -59,7 +59,6 @@ exports.startAttempt = async (req, res) => {
     const quiz = await Quiz.findById(quizId);
     if (!quiz) return res.status(404).json({ error: "Quiz not found" });
 
-
     let studentId = null; //this will be removed but im too sleepy to di it now and im suere it will break something
     if (req.user && req.user.role === "student") {
       studentId = req.user.id;
@@ -69,7 +68,9 @@ exports.startAttempt = async (req, res) => {
       if (!student) return res.status(400).json({ error: "studentId invalid" });
       studentId = student._id;
     } else {
-      return res.status(400).json({ error: "studentId is required for non-student starters" });
+      return res
+        .status(400)
+        .json({ error: "studentId is required for non-student starters" });
     }
 
     const attempt = await Attempt.create({
@@ -77,7 +78,10 @@ exports.startAttempt = async (req, res) => {
       studentId,
       status: "in_progress",
       startedAt: new Date(),
-      maxPossibleScore: quiz.questions.reduce((sum, q) => sum + (q.points || 0), 0),
+      maxPossibleScore: quiz.questions.reduce(
+        (sum, q) => sum + (q.points || 0),
+        0
+      ),
       meta: {
         userAgent: req.headers["user-agent"],
         ipHash: req.ip, // should we hash this? idfk tbh 🦦
@@ -92,7 +96,6 @@ exports.startAttempt = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 // POST /api/v1/attempts/:attemptId/save <- for autosave after each question (as much as i would like to screw students over, we actully need this one)
 exports.saveAttempt = async (req, res) => {
@@ -126,10 +129,15 @@ exports.saveAttempt = async (req, res) => {
 // POST /api/v1/attempts/:attemptId/submit
 exports.submitAttempt = async (req, res) => {
   try {
-    const attempt = await Attempt.findById(req.params.attemptId).populate("quizId");
+    const attempt = await Attempt.findById(req.params.attemptId).populate(
+      "quizId"
+    );
     if (!attempt) return res.status(404).json({ error: "Attempt not found" });
 
-    if (String(attempt.studentId) !== String(req.user?.id) && req.user.role !== "teacher") {
+    if (
+      String(attempt.studentId) !== String(req.user?.id) &&
+      req.user.role !== "teacher"
+    ) {
       // only the owner or teacher may submit other attempts
       return res.status(403).json({ error: "Forbidden" });
     }
@@ -185,13 +193,18 @@ exports.getAttemptById = async (req, res) => {
     if (!attempt) return res.status(404).json({ error: "Attempt not found" });
 
     if (req.user.role === "student") {
-      if (String(attempt.studentId._id || attempt.studentId) !== String(req.user.id)) {
+      if (
+        String(attempt.studentId._id || attempt.studentId) !==
+        String(req.user.id)
+      ) {
         return res.status(403).json({ error: "Forbidden" });
       }
     }
 
     if (req.user.role === "teacher") {
-      const quiz = attempt.quizId.quizCode ? attempt.quizId : await Quiz.findById(attempt.quizId);
+      const quiz = attempt.quizId.quizCode
+        ? attempt.quizId
+        : await Quiz.findById(attempt.quizId);
       if (!quiz) return res.status(404).json({ error: "Quiz not found" });
       if (String(quiz.teacherId) !== String(req.user.id)) {
         return res.status(403).json({ error: "Forbidden" });
@@ -205,7 +218,7 @@ exports.getAttemptById = async (req, res) => {
   }
 };
 
-// GET /api/v1/quizzes/:quizId/attempts <- pretty clear what this one is used for 
+// GET /api/v1/quizzes/:quizId/attempts <- pretty clear what this one is used for
 exports.getAttemptsForQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -220,7 +233,7 @@ exports.getAttemptsForQuiz = async (req, res) => {
     }
 
     const attempts = await Attempt.find({ quizId })
-      .populate("studentId", "name email studentId") 
+      .populate("studentId", "name email studentId")
       .select("studentId studentInfo score submittedAt startedAt status");
 
     res.json(attempts);
@@ -229,8 +242,6 @@ exports.getAttemptsForQuiz = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 exports.startPublicAttempt = async (req, res) => {
   try {
@@ -262,7 +273,8 @@ exports.startPublicAttempt = async (req, res) => {
 
     if (quiz.pin) {
       const stored = String(quiz.pin).trim();
-      const provided = typeof pin === "undefined" || pin === null ? "" : String(pin).trim();
+      const provided =
+        typeof pin === "undefined" || pin === null ? "" : String(pin).trim();
       if (stored !== provided) {
         return res.status(403).json({ error: "Incorrect PIN" });
       }
@@ -277,7 +289,10 @@ exports.startPublicAttempt = async (req, res) => {
       },
       status: "in_progress",
       startedAt: new Date(),
-      maxPossibleScore: quiz.questions.reduce((sum, q) => sum + (q.points || 0), 0),
+      maxPossibleScore: quiz.questions.reduce(
+        (sum, q) => sum + (q.points || 0),
+        0
+      ),
       meta: {
         userAgent: req.headers["user-agent"],
         ipHash: req.ip,
@@ -310,7 +325,6 @@ exports.startPublicAttempt = async (req, res) => {
   }
 };
 
-
 // PUBLIC SAVE: POST /api/v1/attempts/public/:attemptId/save
 exports.savePublicAttempt = async (req, res) => {
   try {
@@ -337,7 +351,9 @@ exports.savePublicAttempt = async (req, res) => {
 // PUBLIC SUBMIT: POST /api/v1/attempts/public/:attemptId/submit
 exports.submitPublicAttempt = async (req, res) => {
   try {
-    const attempt = await Attempt.findById(req.params.attemptId).populate("quizId");
+    const attempt = await Attempt.findById(req.params.attemptId).populate(
+      "quizId"
+    );
     if (!attempt) return res.status(404).json({ error: "Attempt not found" });
 
     if (attempt.status !== "in_progress") {
@@ -386,7 +402,9 @@ exports.submitPublicAttempt = async (req, res) => {
 // PUBLIC GET: GET /api/v1/attempts/public/:attemptId
 exports.getPublicAttempt = async (req, res) => {
   try {
-    const attempt = await Attempt.findById(req.params.attemptId).populate("quizId");
+    const attempt = await Attempt.findById(req.params.attemptId).populate(
+      "quizId"
+    );
     if (!attempt) return res.status(404).json({ error: "Attempt not found" });
 
     const quiz = attempt.quizId;
@@ -415,7 +433,6 @@ exports.getPublicAttempt = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 // https://www.youtube.com/watch?v=suGI-LmoO7g
 // https://www.youtube.com/watch?v=ITo-WbpANi0

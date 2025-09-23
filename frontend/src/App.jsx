@@ -16,6 +16,7 @@ import PublicAttemptPlayer from "./pages/PublicAttemptPlayer";
 import AttemptResultPage from "./pages/AttemptResultPage";
 import TeacherAttemptsPage from "./pages/TeacherAttemptsPage";
 import Navbar from "./components/Navbar";
+import AnalyticsDashboard from "./pages/teacher/AnalyticsDashboard.jsx";
 
 /*
         to say this code is more polluted than chernobyl would be an understatement
@@ -31,90 +32,105 @@ import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <Navbar />
-      <div className="max-w-6xl mx-auto">
-
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50 flex flex-col">
+      <Navbar /> {/*the nav bar was making lots of issues im tired*/}
+      <div className="flex-1 w-full max-w-full mx-auto pt-24">
+        {" "}
+        {/* Added pt-24 for navbar spacing */}
         <Routes>
           {/* <Route path="/" element={<Login />} /> why on god`s green earth would anyuone do that you absolute buffoons???????? */}
           <Route path="/" element={<Landing />} />
-          <Route path="/auth/login" element={<GuestRoute> <Login /> </GuestRoute>} />
-          <Route path="/auth/register" element={<GuestRoute><Register /></GuestRoute>} />
-
-
-        <Route
-          path="/teacher"
-          element={
-            <ProtectedRoute role="teacher">
-              <TeacherDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/quizzes"
-          element={
-            <ProtectedRoute role="teacher">
-              <QuizList />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/quizzes/new"
-          element={
-            <ProtectedRoute role="teacher">
-              <QuizForm />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/quiz/:id"
-          element={
-            <ProtectedRoute role="teacher">
-              <TeacherQuizView />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/quizzes/:id/edit"
-          element={
-            <ProtectedRoute role="teacher">
-              <QuizForm />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/quizzes/:quizId/attempts"
-          element={
-            <ProtectedRoute role="teacher">
-              <TeacherAttemptsPage />
-            </ProtectedRoute>
-          }
-        />
-
+          <Route
+            path="/auth/login"
+            element={
+              <GuestRoute>
+                {" "}
+                <Login />{" "}
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/auth/register"
+            element={
+              <GuestRoute>
+                <Register />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/teacher"
+            element={
+              <ProtectedRoute role="teacher">
+                <TeacherDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/quizzes"
+            element={
+              <ProtectedRoute role="teacher">
+                <QuizList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/quizzes/new"
+            element={
+              <ProtectedRoute role="teacher">
+                <QuizForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/quiz/:id"
+            element={
+              <ProtectedRoute role="teacher">
+                <TeacherQuizView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/quizzes/:id/edit"
+            element={
+              <ProtectedRoute role="teacher">
+                <QuizForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/quizzes/:quizId/attempts"
+            element={
+              <ProtectedRoute role="teacher">
+                <TeacherAttemptsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
           <Route path="/q/:quizCode" element={<JoinQuizPage />} />
-          <Route path="/q/:quizCode/attempt/:attemptId" element={<PublicAttemptPlayer />} />
+          <Route
+            path="/q/:quizCode/attempt/:attemptId"
+            element={<PublicAttemptPlayer />}
+          />
           <Route path="/attempts/:attemptId" element={<AttemptResultPage />} />
 
+          <Route
+            path="/teacher/quizzes/:quizId/analytics/summary"
+            element={
+              <ProtectedRoute role="teacher">
+                <AnalyticsDashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-
-
       </div>
     </div>
   );
 }
 
-
-
 /**
  * Auth Flow Refactor — by Montaser
  *
- * We removed the old `AuthContext` (custom context + provider) 
+ * We removed the old `AuthContext` (custom context + provider)
  * and replaced it fully with Redux for authentication state.
  *
  * - Auth state (user + token) now lives in `authSlice`.
