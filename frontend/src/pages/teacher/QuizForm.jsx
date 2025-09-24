@@ -75,7 +75,6 @@ export default function QuizForm() {
     };
   }, [id]);
 
-
   function validateBeforeSend() {
     if (!title.trim()) {
       setError("Title is required.");

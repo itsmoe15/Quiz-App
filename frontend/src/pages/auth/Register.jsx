@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../store/slices/authSlice";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -109,7 +110,7 @@ export default function Register() {
         </div>
 
         <div className="text-center mt-6">
-          <p className="text-gray-600">
+          <p className="text-gray-600 mt-2">
             Already have an account?{" "}
             <a
               href="/auth/login"

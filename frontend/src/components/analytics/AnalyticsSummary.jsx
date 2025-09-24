@@ -1,5 +1,4 @@
 // frontend/src/components/analytics/AnalyticsSummary.jsx
-//please ignore all of this i cant even get the backend to work so i havent had time to run this
 import React from "react";
 
 const AnalyticsSummary = ({ analytics, detailedAnalytics }) => {
