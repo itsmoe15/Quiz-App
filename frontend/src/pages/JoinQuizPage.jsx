@@ -28,39 +28,58 @@ export default function JoinQuizPage() {
   const [remaining, setRemaining] = useState(0);
   const intervalRef = useRef(null);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const meta = await getPublicQuiz(quizCode);
-        if (!mounted) return;
-        setQuizMeta(meta);
+useEffect(() => {
+  let mounted = true;
 
-        if (meta.startAt) {
-          const startMs = new Date(meta.startAt).getTime();
-          const now = Date.now();
-          if (startMs > now) {
-            setRemaining(startMs - now);
-            intervalRef.current = setInterval(() => {
-              const diff = startMs - Date.now();
-              setRemaining(diff > 0 ? diff : 0);
-            }, 1000);
-          }
+  (async () => {
+    try {
+      const meta = await getPublicQuiz(quizCode);
+      if (!mounted) return;
+      setQuizMeta(meta);
+
+      const updateRemaining = () => {
+        if (!meta) return;
+
+        const now = Date.now();
+        const startTime = meta.startAt ? new Date(meta.startAt).getTime() : null;
+        const endTime = meta.endAt ? new Date(meta.endAt).getTime() : null;
+
+        if (startTime && now < startTime) {
+          // Quiz hasn't started yet
+          setRemaining(startTime - now);
+        } else if (endTime && now < endTime) {
+          // Quiz ongoing, countdown to end
+          setRemaining(endTime - now);
+        } else {
+          // Quiz ended
+          setRemaining(0);
         }
-      } catch (err) {
-        console.error(err);
-        setError(
-          err?.response?.data?.error ||
-            err?.message ||
-            "Failed to load quiz info"
-        );
-      }
-    })();
-    return () => {
-      mounted = false;
+      };
+
+      // Initial call
+      updateRemaining();
+
+      // Clear any existing interval first
       if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [quizCode]);
+
+      // Set interval to update countdown every second
+      intervalRef.current = setInterval(updateRemaining, 1000);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err?.response?.data?.error ||
+          err?.message ||
+          "Failed to load quiz info"
+      );
+    }
+  })();
+
+  return () => {
+    mounted = false;
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+}, [quizCode]);
+
 
   const handleStart = async (e) => {
     e.preventDefault();
@@ -92,7 +111,14 @@ export default function JoinQuizPage() {
           return;
         }
       }
-
+      if (quizMeta?.endAt) {
+        const endMs = new Date(quizMeta.endAt).getTime();
+        if (endMs < Date.now()) {
+          setError("Quiz has ended. You can no longer take it.");
+          setLoading(false);
+          return;
+        }
+      }
       const body = {
         quizCode,
         name,
@@ -163,31 +189,74 @@ export default function JoinQuizPage() {
         {quizMeta && (
           <div className="space-y-3 mb-6">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Status:</span>
+              <span className="text-gray-600">Quiz Status:</span>
               <span
                 className={`font-semibold ${
-                  quizMeta.published ? "text-green-600" : "text-red-600"
+                  !quizMeta.published
+                    ? "text-red-600"
+                    : quizMeta.startAt && new Date() < new Date(quizMeta.startAt)
+                    ? "text-yellow-600"
+                    : quizMeta.endAt && new Date() > new Date(quizMeta.endAt)
+                    ? "text-gray-500"
+                    : "text-green-600"
                 }`}
               >
-                {quizMeta.published ? "Ready to Play" : "Not Published"}
+                {!quizMeta.published
+                  ? "Not Published"
+                  : quizMeta.startAt && new Date() < new Date(quizMeta.startAt)
+                  ? "Will Start Soon"
+                  : quizMeta.endAt && new Date() > new Date(quizMeta.endAt)
+                  ? "Over"
+                  : "Open Now"}
               </span>
             </div>
 
-            {quizMeta.published &&
-              quizMeta.startAt &&
-              new Date(quizMeta.startAt) > new Date() && (
-                <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
-                  <div className="text-yellow-800 font-semibold text-sm mb-1">
-                    Starts In
-                  </div>
-                  <div className="text-2xl font-bold text-yellow-600 font-mono">
-                    {formatRemaining(remaining)}
-                  </div>
-                  <div className="text-yellow-600 text-xs mt-1">
-                    {new Date(quizMeta.startAt).toLocaleString()}
-                  </div>
-                </div>
-              )}
+            {quizMeta.published && (quizMeta.startAt || quizMeta.endAt) && (
+              <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
+                {quizMeta.startAt && new Date(quizMeta.startAt) > new Date() ? (
+                  // Quiz hasn't started yet
+                  <>
+                    <div className="text-yellow-800 font-semibold text-sm mb-1">
+                      Starts In
+                    </div>
+                    <div className="text-2xl font-bold text-yellow-600 font-mono">
+                      {formatRemaining(remaining)}
+                    </div>
+                    <div className="text-yellow-600 text-xs mt-1">
+                      {new Date(quizMeta.startAt).toLocaleString()}
+                    </div>
+                  </>
+                ) : quizMeta.endAt && new Date(quizMeta.endAt) < new Date() ? (
+                  // Quiz already ended
+                  <>
+                    <div className="text-red-800 font-semibold text-sm mb-1">
+                      Exam Over
+                    </div>
+                    <div className="text-2xl font-bold text-red-600 font-mono">
+                      00:00:00
+                    </div>
+                    <div className="text-red-600 text-xs mt-1">
+                      Ended on {new Date(quizMeta.endAt).toLocaleString()}
+                    </div>
+                  </>
+                ) : quizMeta.endAt && new Date(quizMeta.startAt) <= new Date() ? (
+                  // Quiz ongoing
+                  <>
+                    <div className="text-green-800 font-semibold text-sm mb-1">
+                      Ends In
+                    </div>
+                    <div className="text-2xl font-bold text-green-600 font-mono">
+                      {formatRemaining(remaining)}
+                    </div>
+                    <div className="text-green-600 text-xs mt-1">
+                      Ends on {new Date(quizMeta.endAt).toLocaleString()}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            )}
+
+
 
             {!quizMeta.published && (
               <div className="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
@@ -270,7 +339,8 @@ export default function JoinQuizPage() {
             loading ||
             !quizMeta ||
             !quizMeta.published ||
-            (quizMeta.startAt && new Date(quizMeta.startAt) > new Date())
+            (quizMeta.startAt && new Date(quizMeta.startAt) > new Date()) ||
+            (quizMeta.endAt && new Date(quizMeta.endAt) < new Date())
           }
           className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-6"
         >

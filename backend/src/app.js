@@ -25,6 +25,6 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/attempts", attemptRouter);
 app.use("/api/v1/quizzes", quizRouter);
 app.use("/api/v1/quizzes", resultsRoutes);
-app.use("/api", analyticsRouter);
+app.use("/api/v1", analyticsRouter);
 
 module.exports = app;

@@ -294,13 +294,13 @@ export default function PublicAttemptPlayer() {
           </button>
 
           <div className="flex gap-4">
-            <button
+            {/* <button
               onClick={doSave}
               disabled={saving}
               className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50"
             >
               {saving ? "💾 Saving..." : "💾 Save"}
-            </button>
+            </button> */}
 
             <button
               onClick={handleNext}

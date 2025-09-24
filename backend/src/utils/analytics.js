@@ -10,7 +10,7 @@ class QuizAnalytics {
     const Attempt = require("../model/attemptModel");
     const attempts = await Attempt.find({
       quizId: this.quizId,
-      status: "graded",
+      status: "submitted",
     }).populate("quizId");
 
     if (attempts.length === 0) {
