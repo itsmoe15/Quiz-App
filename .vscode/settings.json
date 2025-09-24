@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "frontend/node_modules": true,
+        "backend/node_modules": true,
+        "frontend/package-lock.json": true,
+        "package-lock.json": true
+    }
+}

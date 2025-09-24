@@ -1,3 +1,4 @@
+// backend/src/model/attemptModel.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -15,8 +16,14 @@ const answerSchema = new Schema({
   },
   correct: { type: Boolean, default: false },
   questionPointsAwarded: { type: Number, default: 0 },
-  events: [Schema.Types.Mixed] // for phase2 features
+  events: [Schema.Types.Mixed]
 });
+
+const studentInfoSchema = new Schema({
+  name: String,
+  email: String,
+  studentId: String
+}, { _id: false });
 
 const attemptSchema = new Schema({
   quizId: { 
@@ -34,9 +41,10 @@ const attemptSchema = new Schema({
   },
   studentId: { 
     type: Schema.Types.ObjectId, 
-    ref: 'Student',
-    required: true 
+    ref: 'User',
   },
+  studentInfo: studentInfoSchema,
+
   startedAt: { type: Date, default: Date.now },
   submittedAt: Date,
   answers: [answerSchema],

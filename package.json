@@ -1,5 +1,15 @@
 {
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm start --prefix backend\""
+  },
   "dependencies": {
-    "json2csv": "^6.0.0-alpha.2"
+    "@heroicons/react": "^2.2.0",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^12.23.18",
+    "lucide-react": "^0.544.0",
+    "papaparse": "^5.5.3"
   }
 }
