@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/auth/Login";
@@ -17,6 +17,7 @@ import AttemptResultPage from "./pages/AttemptResultPage";
 import TeacherAttemptsPage from "./pages/TeacherAttemptsPage";
 import Navbar from "./components/Navbar";
 import AnalyticsDashboard from "./pages/teacher/AnalyticsDashboard.jsx";
+import Profile from "./pages/teacher/Profile.jsx";
 
 /*
         to say this code is more polluted than chernobyl would be an understatement
@@ -31,21 +32,32 @@ import AnalyticsDashboard from "./pages/teacher/AnalyticsDashboard.jsx";
 */
 
 export default function App() {
+  const location = useLocation();
+
+  const hideNavbarPaths = ["/q/", "/attempts/"];
+
+  const hideNavbar = hideNavbarPaths.some((path) =>
+    location.pathname.startsWith(path)
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50 flex flex-col">
-      <Navbar /> {/*the nav bar was making lots of issues im tired*/}
-      <div className="flex-1 w-full max-w-full mx-auto pt-24">
-        {" "}
-        {/* Added pt-24 for navbar spacing */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50">
+      {/* Navbar*/}
+      {!hideNavbar && <Navbar />}
+
+      <div
+        className={`flex-1 w-full max-w-full mx-auto ${
+          !hideNavbar ? "pt-24" : ""
+        }`}
+      >
         <Routes>
-          {/* <Route path="/" element={<Login />} /> why on god`s green earth would anyuone do that you absolute buffoons???????? */}
+          {/* Public / Guest Pages */}
           <Route path="/" element={<Landing />} />
           <Route
             path="/auth/login"
             element={
               <GuestRoute>
-                {" "}
-                <Login />{" "}
+                <Login />
               </GuestRoute>
             }
           />
@@ -57,6 +69,16 @@ export default function App() {
               </GuestRoute>
             }
           />
+
+          {/* Public Quiz Pages r */}
+          <Route path="/q/:quizCode" element={<JoinQuizPage />} />
+          <Route
+            path="/q/:quizCode/attempt/:attemptId"
+            element={<PublicAttemptPlayer />}
+          />
+          <Route path="/attempts/:attemptId" element={<AttemptResultPage />} />
+
+          {/* Teacher / Protected Pages */}
           <Route
             path="/teacher"
             element={
@@ -82,18 +104,18 @@ export default function App() {
             }
           />
           <Route
-            path="/teacher/quiz/:id"
+            path="/teacher/quizzes/:quizId/edit"
             element={
               <ProtectedRoute role="teacher">
-                <TeacherQuizView />
+                <QuizForm />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/teacher/quizzes/:id/edit"
+            path="/teacher/quiz/:id"
             element={
               <ProtectedRoute role="teacher">
-                <QuizForm />
+                <TeacherQuizView />
               </ProtectedRoute>
             }
           />
@@ -105,14 +127,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/q/:quizCode" element={<JoinQuizPage />} />
-          <Route
-            path="/q/:quizCode/attempt/:attemptId"
-            element={<PublicAttemptPlayer />}
-          />
-          <Route path="/attempts/:attemptId" element={<AttemptResultPage />} />
-
           <Route
             path="/teacher/quizzes/:quizId/analytics/summary"
             element={
@@ -121,6 +135,19 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Teacher Profile */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute role="teacher">
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch all 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../store/slices/authSlice";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -128,12 +129,12 @@ export default function Login() {
         <div className="text-center mt-6">
           <p className="text-gray-600">
             Don't have an account?{" "}
-            <a
-              href="/register"
+            <Link
+              to="/auth/register"
               className="text-purple-600 hover:text-purple-700 font-medium transition-colors duration-300"
             >
               Create one here
-            </a>
+            </Link>
           </p>
         </div>
       </form>

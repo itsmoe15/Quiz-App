@@ -24,4 +24,9 @@ export const analyticsService = {
     );
     return response.data;
   },
+  // Get results for a quiz
+  getQuizResults: async (quizId) => {
+    const response = await api.get(`/quizzes/${quizId}/results`);
+    return response.data;
+  },
 };

@@ -68,15 +68,16 @@ exports.getDetailedAnalytics = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const attempts = await Attempt.find({ quizId, status: "graded" }).populate(
-      "studentId",
-      "name email"
-    );
+    const attempts = await Attempt.find({
+      quizId,
+      status: "submitted",
+    }).populate();
 
     if (attempts.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No attempts found for detailed analysis" });
+      return res.status(200).json({
+        message: "No attempts found for detailed analysis",
+        attempts: [],
+      });
     }
 
     // Advanced analytics calculations

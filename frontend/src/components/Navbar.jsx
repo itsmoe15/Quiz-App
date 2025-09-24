@@ -4,6 +4,7 @@ import { logout } from "../store/slices/authSlice";
 import {
   AcademicCapIcon,
   ArrowRightOnRectangleIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/solid";
 
 export default function Navbar() {
@@ -59,6 +60,7 @@ export default function Navbar() {
               Welcome, {user?.name || user?.role} 👋
             </span>
 
+            {/* Dashboard links */}
             {user?.role === "teacher" && (
               <Link
                 to="/teacher"
@@ -67,7 +69,6 @@ export default function Navbar() {
                 Dashboard
               </Link>
             )}
-
             {user?.role === "student" && (
               <Link
                 to="/student"
@@ -77,6 +78,15 @@ export default function Navbar() {
               </Link>
             )}
 
+            {/* Profile Link */}
+            <Link
+              to="/profile"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              <UserCircleIcon className="w-5 h-5" /> Profile
+            </Link>
+
+            {/* Logout */}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-red-400"

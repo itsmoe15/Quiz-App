@@ -73,7 +73,7 @@ export default function QuizForm() {
     return () => {
       mounted = false;
     };
-  }, [id, settings]);
+  }, [id]);
 
   function validateBeforeSend() {
     if (!title.trim()) {
