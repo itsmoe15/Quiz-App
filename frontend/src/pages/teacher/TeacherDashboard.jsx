@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTeacherQuizzes } from "../../store/slices/quizSlice";
+import { getAttemptsForQuiz } from "../../services/attemptService";
 import QuizCard from "../../components/QuizCard";
 import { Link } from "react-router-dom";
 
@@ -13,25 +14,46 @@ import {
 
 export default function TeacherDashboard() {
   const dispatch = useDispatch();
-
   const teacherQuizzes = useSelector(
     (state) => state.quiz.teacherQuizzes ?? []
   );
+
+  const [totalAttempts, setTotalAttempts] = useState(0);
 
   useEffect(() => {
     dispatch(fetchTeacherQuizzes());
   }, [dispatch]);
 
-  const totalAttempts = teacherQuizzes.reduce(
-    (acc, quiz) => acc + (quiz.attempts || 0),
-    0
-  );
-  const publishedQuizzes = teacherQuizzes.filter(
-    (quiz) => quiz.isPublished
+  // Fetch attempts for each quiz and calculate total
+  useEffect(() => {
+    const fetchAttemptsForAll = async () => {
+      if (teacherQuizzes.length === 0) {
+        setTotalAttempts(0);
+        return;
+      }
+
+      let total = 0;
+      for (const quiz of teacherQuizzes) {
+        try {
+          const attempts = await getAttemptsForQuiz(quiz._id);
+          total += attempts.length;
+        } catch (err) {
+          console.error(`Failed to fetch attempts for quiz ${quiz._id}:`, err);
+        }
+      }
+      setTotalAttempts(total);
+    };
+
+    fetchAttemptsForAll();
+  }, [teacherQuizzes]);
+
+  const publishedQuizzes = teacherQuizzes.filter((quiz) =>
+    Boolean(quiz.published ?? quiz.isPublished)
   ).length;
+
   const totalPoints = teacherQuizzes.reduce((acc, quiz) => {
     const quizPoints =
-      quiz.questions?.reduce((sum, q) => sum + (q.points || 1), 0) || 0;
+      quiz.questions?.reduce((sum, q) => sum + (q.points ?? 1), 0) || 0;
     return acc + quizPoints;
   }, 0);
 
