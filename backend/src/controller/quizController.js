@@ -232,23 +232,6 @@ exports.publishQuiz = async (req, res) => {
   }
 };
 
-// POST /api/v1/quizzes/validate-pin
-exports.validatePin = async (req, res) => {
-  try {
-    const { quizCode, pin } = req.body;
-    const quiz = await Quiz.findOne({ quizCode });
-    if (!quiz) return res.status(404).json({ error: "Quiz not found" });
-
-    if (quiz.pin && quiz.pin !== pin) {
-      return res.status(403).json({ error: "Incorrect PIN" });
-    }
-
-    res.json({ valid: true, quizId: quiz._id });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-};
 
 exports.validatePin = async (req, res) => {
   try {
