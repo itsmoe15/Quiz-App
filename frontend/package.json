@@ -28,6 +28,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-dropzone": "^14.3.8",
     "react-i18next": "^15.7.3",
     "react-katex": "^3.1.0",
     "react-redux": "^9.2.0",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   createQuiz,
   updateQuiz,
@@ -6,6 +6,8 @@ import {
 } from "../../services/quizService";
 import { useNavigate, useParams } from "react-router-dom";
 import QuestionEditor from "../../components/QuestionEditor";
+import { useDropzone } from "react-dropzone"; // 👈 new
+import { generateQuizFromFile } from "../../services/gemini"; // 👈 new
 
 function toLocalInput(iso) {
   if (!iso) return "";
@@ -19,7 +21,7 @@ function toLocalInput(iso) {
 }
 
 export default function QuizForm() {
-  const { id } = useParams();
+  const { quizId: id } = useParams();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -37,43 +39,46 @@ export default function QuizForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // 👉 New: AI loading state
+  const [aiLoading, setAiLoading] = useState(false);
+
   // Load quiz for edit
-  useEffect(() => {
-    if (!id) return;
+useEffect(() => {
+  if (!id) return;
 
-    let mounted = true;
-    const fetchQuiz = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const data = await getQuizById(id);
-        const quiz = data.quiz ?? data;
+  let mounted = true;
+  const fetchQuiz = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const quiz = await getQuizById(id); // <-- already normalized
 
-        if (!mounted) return;
-        setTitle(quiz.title || "");
-        setDescription(quiz.description || "");
-        setQuestions(Array.isArray(quiz.questions) ? quiz.questions : []);
-        setPin(quiz.pin || "");
-        setStartAt(quiz.startAt ? toLocalInput(quiz.startAt) : "");
-        setEndAt(quiz.endAt ? toLocalInput(quiz.endAt) : "");
-        setSettings(quiz.settings || settings);
-      } catch (err) {
-        console.error(err);
-        setError(
-          err?.response?.data?.error ||
-            err?.message ||
-            "Failed to load quiz for editing."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+      if (!mounted) return;
+      setTitle(quiz.title || "");
+      setDescription(quiz.description || "");
+      setQuestions(Array.isArray(quiz.questions) ? quiz.questions : []);
+      setPin(quiz.pin || "");
+      setStartAt(quiz.startAt ? toLocalInput(quiz.startAt) : "");
+      setEndAt(quiz.endAt ? toLocalInput(quiz.endAt) : "");
+      setSettings(quiz.settings || {});
+    } catch (err) {
+      console.error(err);
+      setError(
+        err?.response?.data?.error ||
+          err?.message ||
+          "Failed to load quiz for editing."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchQuiz();
-    return () => {
-      mounted = false;
-    };
-  }, [id]);
+  fetchQuiz();
+  return () => {
+    mounted = false;
+  };
+}, [id]);
+
 
   function validateBeforeSend() {
     if (!title.trim()) {
@@ -138,6 +143,47 @@ export default function QuizForm() {
     }
   };
 
+  // 👉 Dropzone handler
+  const onDrop = useCallback(
+    async (acceptedFiles) => {
+      if (!acceptedFiles.length) return;
+
+      setAiLoading(true);
+      setError("");
+
+      try {
+        for (const file of acceptedFiles) {
+          const data = await generateQuizFromFile(file);
+          if (data?.questions?.length) {
+            // Append new questions
+            setQuestions((prev) => [...prev, ...data.questions]);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        setError(
+          err?.response?.data?.error ||
+            err?.message ||
+            "AI failed to generate questions."
+        );
+      } finally {
+        setAiLoading(false);
+      }
+    },
+    [setQuestions]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
+      "text/plain": [".txt"],
+    },
+    multiple: true, // allow multiple files
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50 py-6">
       <div className="max-w-4xl mx-auto px-4">
@@ -190,12 +236,42 @@ export default function QuizForm() {
                 placeholder="Enter quiz description"
               />
             </div>
+
+            {/* 👉 Drag & Drop AI Generator */}
+            
+<div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                AI Quiz Maker
+              </label>
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                isDragActive ? "border-purple-500 bg-purple-50" : "border-gray-300"
+              }`}
+              
+            >
+              
+              <input {...getInputProps()} />
+              {aiLoading ? (
+                <p className="text-purple-600 font-medium animate-pulse">
+                  Generating questions from AI...
+                </p>
+              ) : (
+                <p className="text-gray-600">
+                  Drag & drop lecture files here, an our AI will make the questions for you
+                </p>
+              )}
+            </div>
+
+</div>
+            
           </div>
         </div>
 
         {/* Questions Section */}
         <QuestionEditor questions={questions} setQuestions={setQuestions} />
 
+        {/* Schedule & Settings */}
         {/* Schedule & Settings */}
         <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-8 mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6">

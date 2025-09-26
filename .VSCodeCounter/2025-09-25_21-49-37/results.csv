@@ -1,0 +1,85 @@
+"filename", "language", "Markdown", "JSON", "JavaScript", "XML", "JavaScript JSX", "PostCSS", "HTML", "comment", "blank", "total"
+"c:\Users\Moe\Desktop\Quiz-App\README.md", "Markdown", 425, 0, 0, 0, 0, 0, 0, 0, 172, 597
+"c:\Users\Moe\Desktop\Quiz-App\backend\package-lock.json", "JSON", 0, 6269, 0, 0, 0, 0, 0, 0, 1, 6270
+"c:\Users\Moe\Desktop\Quiz-App\backend\package.json", "JSON", 0, 33, 0, 0, 0, 0, 0, 0, 1, 34
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\app.js", "JavaScript", 0, 0, 25, 0, 0, 0, 0, 0, 6, 31
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\config\db.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\analyticsController.js", "JavaScript", 0, 0, 249, 0, 0, 0, 0, 16, 48, 313
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\attemptController.js", "JavaScript", 0, 0, 344, 0, 0, 0, 0, 47, 65, 456
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\authController.js", "JavaScript", 0, 0, 53, 0, 0, 0, 0, 3, 10, 66
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\quizController.js", "JavaScript", 0, 0, 237, 0, 0, 0, 0, 17, 43, 297
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\resultsController.js", "JavaScript", 0, 0, 127, 0, 0, 0, 0, 10, 23, 160
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\controller\userController.js", "JavaScript", 0, 0, 25, 0, 0, 0, 0, 2, 6, 33
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\middleware\auth.js", "JavaScript", 0, 0, 26, 0, 0, 0, 0, 2, 6, 34
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\model\attemptModel.js", "JavaScript", 0, 0, 59, 0, 0, 0, 0, 1, 6, 66
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\model\quizModel.js", "JavaScript", 0, 0, 75, 0, 0, 0, 0, 4, 7, 86
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\model\userModel.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\analyticsRouter.js", "JavaScript", 0, 0, 16, 0, 0, 0, 0, 0, 5, 21
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\attemptRouter.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 5, 19
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\authRoute.js", "JavaScript", 0, 0, 8, 0, 0, 0, 0, 0, 3, 11
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\quizRouter.js", "JavaScript", 0, 0, 19, 0, 0, 0, 0, 0, 5, 24
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\resultsRouter.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 3, 5, 20
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\routes\usersRoute.js", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 5, 12
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\server.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\utils\analytics.js", "JavaScript", 0, 0, 170, 0, 0, 0, 0, 13, 37, 220
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\utils\export.js", "JavaScript", 0, 0, 154, 0, 0, 0, 0, 17, 28, 199
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\utils\genereateToken.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\Moe\Desktop\Quiz-App\backend\src\utils\scoring.js", "JavaScript", 0, 0, 105, 0, 0, 0, 0, 4, 24, 133
+"c:\Users\Moe\Desktop\Quiz-App\frontend\README.md", "Markdown", 7, 0, 0, 0, 0, 0, 0, 0, 6, 13
+"c:\Users\Moe\Desktop\Quiz-App\frontend\eslint.config.js", "JavaScript", 0, 0, 28, 0, 0, 0, 0, 0, 2, 30
+"c:\Users\Moe\Desktop\Quiz-App\frontend\index.html", "HTML", 0, 0, 0, 0, 0, 0, 13, 0, 1, 14
+"c:\Users\Moe\Desktop\Quiz-App\frontend\package.json", "JSON", 0, 54, 0, 0, 0, 0, 0, 0, 1, 55
+"c:\Users\Moe\Desktop\Quiz-App\frontend\postcss.config.cjs", "JavaScript", 0, 0, 6, 0, 0, 0, 0, 0, 1, 7
+"c:\Users\Moe\Desktop\Quiz-App\frontend\public\errorimage.svg", "XML", 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"c:\Users\Moe\Desktop\Quiz-App\frontend\public\vite.svg", "XML", 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\App.css", "PostCSS", 0, 0, 0, 0, 0, 29, 0, 8, 11, 48
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\App.jsx", "JavaScript JSX", 0, 0, 0, 0, 127, 0, 0, 29, 13, 169
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\assets\react.svg", "XML", 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\AuthForm.jsx", "JavaScript JSX", 0, 0, 0, 0, 13, 0, 0, 0, 1, 14
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\ConfidenceSlider.jsx", "JavaScript JSX", 0, 0, 0, 0, 15, 0, 0, 0, 1, 16
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\GuestRoute.jsx", "JavaScript JSX", 0, 0, 0, 0, 9, 0, 0, 0, 4, 13
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\LatexRenderer.jsx", "JavaScript JSX", 0, 0, 0, 0, 44, 0, 0, 18, 11, 73
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\Navbar.jsx", "JavaScript JSX", 0, 0, 0, 0, 88, 0, 0, 5, 9, 102
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\ProtectedRoute.jsx", "JavaScript JSX", 0, 0, 0, 0, 12, 0, 0, 0, 5, 17
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\QuestionEditor.jsx", "JavaScript JSX", 0, 0, 0, 0, 309, 0, 0, 7, 16, 332
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\QuizCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 120, 0, 0, 0, 12, 132
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\RoleRoute.jsx", "JavaScript JSX", 0, 0, 0, 0, 7, 0, 0, 0, 2, 9
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\analytics\AnalyticsSummary.jsx", "JavaScript JSX", 0, 0, 0, 0, 131, 0, 0, 5, 7, 143
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\analytics\ConfidenceCalibration.jsx", "JavaScript JSX", 0, 0, 0, 0, 254, 0, 0, 12, 17, 283
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\analytics\PerformanceDistribution.jsx", "JavaScript JSX", 0, 0, 0, 0, 157, 0, 0, 5, 9, 171
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\analytics\QuestionAnalytics.jsx", "JavaScript JSX", 0, 0, 0, 0, 129, 0, 0, 8, 11, 148
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\analytics\resultsTable.jsx", "JavaScript JSX", 0, 0, 0, 0, 224, 0, 0, 1, 16, 241
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\components\ui\LoadingSpinner.jsx", "JavaScript JSX", 0, 0, 0, 0, 18, 0, 0, 1, 4, 23
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\hooks\useQuiz.js", "JavaScript", 0, 0, 15, 0, 0, 0, 0, 0, 4, 19
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\index.css", "PostCSS", 0, 0, 0, 0, 0, 33, 0, 1, 5, 39
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\main.jsx", "JavaScript JSX", 0, 0, 0, 0, 16, 0, 0, 0, 3, 19
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\AttemptResultPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 329, 0, 0, 18, 26, 373
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\JoinQuizPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 322, 0, 0, 14, 31, 367
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\Landing.jsx", "JavaScript JSX", 0, 0, 0, 0, 93, 0, 0, 7, 10, 110
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\NotFound.jsx", "JavaScript JSX", 0, 0, 0, 0, 49, 0, 0, 4, 5, 58
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\PublicAttemptPlayer.jsx", "JavaScript JSX", 0, 0, 0, 0, 282, 0, 0, 17, 25, 324
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\TeacherAttemptsPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 243, 0, 0, 21, 16, 280
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\auth\Login.jsx", "JavaScript JSX", 0, 0, 0, 0, 129, 0, 0, 2, 13, 144
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\auth\Register.jsx", "JavaScript JSX", 0, 0, 0, 0, 112, 0, 0, 2, 13, 127
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\AnalyticsDashboard.jsx", "JavaScript JSX", 0, 0, 0, 0, 192, 0, 0, 9, 18, 219
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\Profile.jsx", "JavaScript JSX", 0, 0, 0, 0, 369, 0, 0, 19, 38, 426
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\QuizForm.jsx", "JavaScript JSX", 0, 0, 0, 0, 302, 0, 0, 7, 30, 339
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\QuizList.jsx", "JavaScript JSX", 0, 0, 0, 0, 109, 0, 0, 4, 7, 120
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\TeacherDashboard.jsx", "JavaScript JSX", 0, 0, 0, 0, 165, 0, 0, 8, 17, 190
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\pages\teacher\TeacherQuizView.jsx", "JavaScript JSX", 0, 0, 0, 0, 471, 0, 0, 13, 37, 521
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\analyticsService.js", "JavaScript", 0, 0, 24, 0, 0, 0, 0, 5, 4, 33
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\api.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 1, 4, 17
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\attemptService.js", "JavaScript", 0, 0, 37, 0, 0, 0, 0, 1, 9, 47
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\authService.js", "JavaScript", 0, 0, 13, 0, 0, 0, 0, 0, 4, 17
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\quizService.js", "JavaScript", 0, 0, 33, 0, 0, 0, 0, 0, 8, 41
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\services\resultsService.js", "JavaScript", 0, 0, 23, 0, 0, 0, 0, 5, 6, 34
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\store\slices\attemptSlice.js", "JavaScript", 0, 0, 43, 0, 0, 0, 0, 0, 5, 48
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\store\slices\authSlice.js", "JavaScript", 0, 0, 68, 0, 0, 0, 0, 0, 8, 76
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\store\slices\quizSlice.js", "JavaScript", 0, 0, 45, 0, 0, 0, 0, 0, 5, 50
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\store\store.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\utils\latex.js", "JavaScript", 0, 0, 5, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\Moe\Desktop\Quiz-App\frontend\src\utils\scoring.js", "JavaScript", 0, 0, 17, 0, 0, 0, 0, 0, 3, 20
+"c:\Users\Moe\Desktop\Quiz-App\frontend\tailwind.config.cjs", "JavaScript", 0, 0, 48, 0, 0, 0, 0, 1, 1, 50
+"c:\Users\Moe\Desktop\Quiz-App\frontend\vite.config.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 2, 14
+"c:\Users\Moe\Desktop\Quiz-App\package.json", "JSON", 0, 15, 0, 0, 0, 0, 0, 0, 1, 16
+"Total", "-", 432, 6371, 2204, 3, 4840, 62, 13, 397, 1043, 15365

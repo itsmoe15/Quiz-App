@@ -17,37 +17,38 @@ const Attempt = require("../model/attemptModel");
 const Quiz = require("../model/quizModel");
 const mongoose = require("mongoose");
 const User = require("../model/userModel");
+const { calculateScoreForAnswer } = require("../utils/scoring");
 const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
 // -------------------- simple scoring 3: --------------------
 
-function calculateScoreForAnswer(question, answer, settings) {
-  const { confidence, selectedOptionId, typedAnswer } = answer;
+// function calculateScoreForAnswer(question, answer, settings) {
+//   const { confidence, selectedOptionId, typedAnswer } = answer;
 
-  let isCorrect = false;
-  if (question.type === "mcq") {
-    isCorrect = question.correctAnswer === selectedOptionId;
-  } else if (question.type === "short") {
-    isCorrect =
-      typedAnswer?.trim().toLowerCase() ===
-      question.correctAnswer?.trim().toLowerCase();
-  } else if (question.type === "numeric") {
-    isCorrect = Number(typedAnswer) === Number(question.correctAnswer);
-  }
+//   let isCorrect = false;
+//   if (question.type === "mcq") {
+//     isCorrect = question.correctAnswer === selectedOptionId;
+//   } else if (question.type === "short") {
+//     isCorrect =
+//       typedAnswer?.trim().toLowerCase() ===
+//       question.correctAnswer?.trim().toLowerCase();
+//   } else if (question.type === "numeric") {
+//     isCorrect = Number(typedAnswer) === Number(question.correctAnswer);
+//   }
 
-  let pointsAwarded = 0;
-  if (settings.scoringMode === "confidence_absolute") {
-    if (isCorrect) {
-      pointsAwarded = (confidence / 100) * question.points;
-    } else if (settings.negativeForWrong) {
-      pointsAwarded = -1 * (confidence / 100) * question.points;
-    }
-  } else if (settings.scoringMode === "binary") {
-    pointsAwarded = isCorrect ? question.points : 0;
-  }
-  // yassmin will make more (funny)
+//   let pointsAwarded = 0;
+//   if (settings.scoringMode === "confidence_absolute") {
+//     if (isCorrect) {
+//       pointsAwarded = (confidence / 100) * question.points;
+//     } else if (settings.negativeForWrong) {
+//       pointsAwarded = -1 * (confidence / 100) * question.points;
+//     }
+//   } else if (settings.scoringMode === "binary") {
+//     pointsAwarded = isCorrect ? question.points : 0;
+//   }
+//   // yassmin will make more (funny)
 
-  return { isCorrect, pointsAwarded };
-}
+//   return { isCorrect, pointsAwarded };
+// }
 
 // -------------------- controllers fml --------------------
 

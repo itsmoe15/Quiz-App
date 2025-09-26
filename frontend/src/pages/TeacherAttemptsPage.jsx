@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAttemptsForQuiz } from "../services/attemptService";
+import { resultsService } from "../services/resultsService"; 
 
 export default function TeacherAttemptsPage() {
   const { quizId } = useParams();
@@ -20,7 +21,7 @@ export default function TeacherAttemptsPage() {
       try {
         const data = await getAttemptsForQuiz(quizId);
         if (!mounted) return;
-        console.log("📌 Raw attempts data:", data); // 🔥 log all attempts
+        console.log("Raw attempts data:", data); 
         setAttempts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch attempts:", err);
@@ -37,6 +38,23 @@ export default function TeacherAttemptsPage() {
       mounted = false;
     };
   }, [quizId]);
+
+  const handleDownloadCSV = async () => {
+    try {
+      const blob = await resultsService.exportResults(quizId, "csv");
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `quiz-${quizId}-answers.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("❌ Failed to download CSV:", err);
+      alert("Failed to download answer sheet. Please try again.");
+    }
+  };
 
   if (loading)
     return (
@@ -84,10 +102,16 @@ export default function TeacherAttemptsPage() {
             </div>
             <div className="flex gap-4">
               <button
+                onClick={handleDownloadCSV}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
+              >
+                📜 Export Answers To CSV
+              </button>
+              <button
                 onClick={() => navigate(-1)}
                 className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
               >
-                ← Back
+                Back to Quiz
               </button>
             </div>
           </div>
@@ -218,6 +242,7 @@ export default function TeacherAttemptsPage() {
                       </div>
                     </div>
 
+{/* FIXME: impelemnt view with the teacher api not student */}
                     {/* Action Buttons */}
                     <div className="flex gap-3">
                       <button
@@ -227,8 +252,9 @@ export default function TeacherAttemptsPage() {
                       >
                         📊 View Answers
                       </button>
+{/* FIXME: impelemnt view with the teacher api not student */}
 
-                      <button
+                      {/* <button
                         onClick={() => {
                           window.open(
                             `${window.location.origin}/attempts/${a._id}`,
@@ -239,7 +265,7 @@ export default function TeacherAttemptsPage() {
                         title="Open in new tab"
                       >
                         🔗 Open
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAttemptById, getPublicAttempt } from "../services/attemptService";
 import LatexRenderer from "../components/LatexRenderer";
-import QRCode from "qrcode"; // use named import
+import QRCode from "qrcode"; // small QR generator (toDataURL)
 
 export default function AttemptResultPage() {
   const { attemptId } = useParams();
@@ -12,63 +12,74 @@ export default function AttemptResultPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [isProtectedView, setIsProtectedView] = useState(false); // true if we got the protected endpoint
 
   useEffect(() => {
     let mounted = true;
-    const url = window.location.href;
 
+    // generate QR code for the page link (will be used on locked view)
+    const url = window.location.href;
     QRCode.toDataURL(url, {
-      errorCorrectionLevel: 'H',
-      width: 150,
+      errorCorrectionLevel: "H",
+      width: 300,
       margin: 2,
       color: {
-        dark: '#000000ff', 
-        light: '#00000000' 
-      }
+        dark: "#000000ff",
+        light: "#00000000", // transparent background
+      },
     })
-    .then(dataUrl => setQrCodeDataUrl(dataUrl))
-    .catch(err => console.error(err));
+      .then((dataUrl) => {
+        if (mounted) setQrCodeDataUrl(dataUrl);
+      })
+      .catch((err) => {
+        // not fatal — just log
+        console.warn("QR generation failed:", err);
+      });
 
     (async () => {
       setLoading(true);
       setError("");
-      try {
-        // try protected endpoint first
-        try {
-          const res = await getAttemptById(attemptId);
-          if (!mounted) return;
-          setAttempt(res);
-          // server returns attempt with populated quizId or embed quiz
-          setQuiz(res.quiz ?? res.quizId ?? null);
-          setLoading(false);
-          return;
-        } catch (err) {
-          // try public endpoint as fallback
-          console.warn(
-            "protected attempt fetch failed, falling back to public",
-            err
-          );
-        }
 
+      // Try protected fetch first. If it works, the viewer is authorized (teacher or owner)
+      try {
+        const res = await getAttemptById(attemptId);
+        if (!mounted) return;
+        setAttempt(res);
+        setQuiz(res.quiz ?? res.quizId ?? null);
+        setIsProtectedView(true);
+        setLoading(false);
+        return;
+      } catch (err) {
+        // If protected fetch failed: likely unauthorized (student/public) or token missing.
+        // We'll fall back to public endpoint below.
+        console.warn("Protected fetch failed; falling back to public:", err?.response?.status || err?.message);
+      }
+
+      // Public fetch (safe data) — students / public users will use this one
+      try {
         const pub = await getPublicAttempt(attemptId);
         if (!mounted) return;
         setAttempt(pub);
         setQuiz(pub.quiz ?? pub.quizId ?? null);
+        setIsProtectedView(false);
       } catch (err) {
-        console.error(err);
+        console.error("Public fetch failed:", err);
+        if (!mounted) return;
         setError(
-          err?.response?.data?.error || err?.message || "Failed to load attempt"
+          err?.response?.data?.error ||
+            err?.message ||
+            "Failed to load attempt"
         );
       } finally {
         if (mounted) setLoading(false);
       }
-      
     })();
+
     return () => {
       mounted = false;
     };
   }, [attemptId]);
-  
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
@@ -102,37 +113,42 @@ export default function AttemptResultPage() {
       </div>
     );
 
-  // Ensure exam end date passed before showing results (if endAt provided)
-  if (quiz.endAt) {
+  // If this is a public viewer (isProtectedView === false), enforce lock until quiz.endAt is passed
+  if (!isProtectedView && quiz.endAt) {
     const end = new Date(quiz.endAt).getTime();
-
     if (Date.now() < end) {
+      // show locked screen with QR code to revisit later
       return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
-      <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 max-w-md mx-4 text-center">
-        <div className="text-6xl mb-4">⏰</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Results Locked
-        </h2>
-        <p className="text-gray-600 mb-4">
-          The exam finishes at <strong>9/24/2025, 3:00:00 PM</strong>.
-        </p>
-        <p className="text-gray-500 text-sm mb-6">
-          Please come back after that time to view your score and answers.
-        </p>
-
-        {qrCodeDataUrl && (
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-gray-700 text-sm mb-1">
-Scan this QR code to quickly return to this page later.
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
+          <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div className="text-6xl mb-4">⏰</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Results Locked
+            </h2>
+            <p className="text-gray-600 mb-4">
+              The exam finishes at{" "}
+              <strong>{new Date(quiz.endAt).toLocaleString()}</strong>.
             </p>
-            <img src={qrCodeDataUrl} alt="Exam QR Code" className="w-36 h-36" />
+            <p className="text-gray-500 text-sm mb-6">
+              Please come back after that time to view your score and answers.
+            </p>
+
+            {qrCodeDataUrl && (
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-gray-700 text-sm mb-1">
+                  Scan this QR code to quickly return to this page later.
+                </p>
+                <img
+                  src={qrCodeDataUrl}
+                  alt="Exam QR Code"
+                  className="w-36 h-36 object-contain"
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
+        </div>
+      );
+    }
   }
 
   // extract student info (support both studentInfo or populated studentId)
@@ -159,19 +175,19 @@ Scan this QR code to quickly return to this page later.
     maxPossible > 0 ? Math.round((totalScore / maxPossible) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
-      <div className="max-w-4xl mx-auto px-4 ">
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 py-8">
+      <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/30 p-8 mb-8 text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">
             {quiz.title ?? "Quiz Results"}
           </h1>
 
           {/* Score Card */}
           <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl p-6 text-white mb-6">
-            <div className="text-6xl font-bold mb-2">
+            <div className="text-4xl md:text-5xl font-bold mb-2">
               {totalScore}
-              <span className="text-2xl">/{maxPossible}</span>
+              <span className="text-xl md:text-2xl">/{maxPossible}</span>
             </div>
             <div className="text-2xl font-semibold">{percentage}%</div>
             <div className="text-lg opacity-90">Final Score</div>
@@ -209,7 +225,7 @@ Scan this QR code to quickly return to this page later.
               const answer = (attempt.answers || []).find(
                 (a) =>
                   String(a.questionId) === String(q._id) ||
-                  String(a.questionId) === String(q._id)
+                  String(a.questionId) === String(q.id)
               );
               const selected =
                 answer?.selectedOptionId ?? answer?.typedAnswer ?? null;
@@ -240,7 +256,7 @@ Scan this QR code to quickly return to this page later.
                         <LatexRenderer content={q.prompt} />
                       </div>
 
-                      {/* show options for mcq */}
+                      {/* MCQ options */}
                       {q.type === "mcq" && Array.isArray(q.options) && (
                         <div className="space-y-2 mb-4">
                           {q.options.map((opt) => (
@@ -270,16 +286,11 @@ Scan this QR code to quickly return to this page later.
                               </div>
                               <div className="text-sm font-semibold">
                                 {String(q.correctAnswer) === String(opt.id) && (
-                                  <span className="text-green-600">
-                                    ✓ Correct
-                                  </span>
+                                  <span className="text-green-600">✓ Correct</span>
                                 )}
                                 {String(selected) === String(opt.id) &&
-                                  String(q.correctAnswer) !==
-                                    String(opt.id) && (
-                                    <span className="text-red-600">
-                                      ✗ Your answer
-                                    </span>
+                                  String(q.correctAnswer) !== String(opt.id) && (
+                                    <span className="text-red-600">✗ Your answer</span>
                                   )}
                               </div>
                             </div>
@@ -287,7 +298,7 @@ Scan this QR code to quickly return to this page later.
                         </div>
                       )}
 
-                      {/* short/numeric show model answer and user's typed */}
+                      {/* Short / Numeric */}
                       {(q.type === "short" || q.type === "numeric") && (
                         <div className="space-y-3">
                           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -303,9 +314,7 @@ Scan this QR code to quickly return to this page later.
                                 : "bg-red-50 border-red-200"
                             }`}
                           >
-                            <div className="font-semibold mb-1">
-                              Your Answer:
-                            </div>
+                            <div className="font-semibold mb-1">Your Answer:</div>
                             <div>
                               {answer?.typedAnswer || <em>Not answered</em>}
                             </div>
@@ -339,9 +348,7 @@ Scan this QR code to quickly return to this page later.
                       <div className="text-sm text-gray-600 mt-1">
                         Points: {pointsAwarded}
                       </div>
-                      <div className="text-sm text-gray-600">
-                        Confidence: {confidence}%
-                      </div>
+                      <div className="text-sm text-gray-600">Confidence: {confidence}%</div>
                     </div>
                   </div>
                 </div>
@@ -350,21 +357,14 @@ Scan this QR code to quickly return to this page later.
           ) : (
             <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 text-center">
               <div className="text-6xl mb-4">❓</div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                No Questions
-              </h3>
-              <p className="text-gray-600">
-                No questions recorded for this quiz.
-              </p>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Questions</h3>
+              <p className="text-gray-600">No questions recorded for this quiz.</p>
             </div>
           )}
         </div>
 
-        {/* Fun Footer */}
         <div className="text-center mt-8">
-          <p className="text-white/80 text-sm">
-            Great job! 🎉 Keep learning and improving!
-          </p>
+          <p className="text-white/80 text-sm">Great job! 🎉 Keep learning and improving!</p>
         </div>
       </div>
     </div>

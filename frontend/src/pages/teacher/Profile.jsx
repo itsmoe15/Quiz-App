@@ -1,10 +1,8 @@
-//this is super useless but i dooooonnt care
-//https://www.youtube.com/watch?v=-NvEmLvRlbg
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getMe } from "../../services/authService";
+import { updateUserProfile } from "../../services/userService";
 import { setUser } from "../../store/slices/authSlice";
 import {
   CameraIcon,
@@ -27,10 +25,12 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
-    department: "",
-    bio: "",
-    avatar: "",
+    meta: {
+      phoneNumber: "",
+      department: "",
+      bio: "",
+      avatarUrl: "",
+    }
   });
 
   useEffect(() => {
@@ -43,11 +43,16 @@ export default function Profile() {
         setFormData({
           name: userData.name || "",
           email: userData.email || "",
-          phone: userData.phone || "",
-          department: userData.department || "",
-          bio: userData.bio || "",
-          avatar: userData.avatar || "",
+          meta: {
+            phoneNumber: userData.meta?.phoneNumber || "",
+            department: userData.meta?.department || "",
+            bio: userData.meta?.bio || "",
+            avatarUrl: userData.meta?.avatarUrl || "",
+          }
         });
+
+        // Update Redux store with fetched data
+        dispatch(setUser(userData));
       } catch (err) {
         console.error("Failed to fetch profile:", err);
         setError("Failed to load profile data");
@@ -56,28 +61,27 @@ export default function Profile() {
       }
     };
 
-    // Use Redux user if available, otherwise fetch from API
-    if (reduxUser) {
-      setFormData({
-        name: reduxUser.name || "",
-        email: reduxUser.email || "",
-        phone: reduxUser.phone || "",
-        department: reduxUser.department || "",
-        bio: reduxUser.bio || "",
-        avatar: reduxUser.avatar || "",
-      });
-      setLoading(false);
-    } else {
-      fetchProfile();
-    }
-  }, [reduxUser]);
+    fetchProfile();
+  }, [dispatch]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Check if the field belongs to meta object
+    if (['phoneNumber', 'department', 'bio', 'avatarUrl'].includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        meta: {
+          ...prev.meta,
+          [name]: value
+        }
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSave = async () => {
@@ -86,23 +90,37 @@ export default function Profile() {
       setError("");
       setSuccess("");
 
-      // Mock update for now - you'll need to implement updateProfile in authService
-      console.log("Updating profile with:", formData);
+      // Prepare the update data
+      const updateData = {
+        name: formData.name,
+        email: formData.email,
+        meta: formData.meta
+      };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Call the API to update the user
+      const updatedUser = await updateUserProfile(reduxUser.id || reduxUser._id, updateData);
 
       // Update Redux store with new data
-      const updatedUser = { ...reduxUser, ...formData };
       dispatch(setUser(updatedUser));
+
+      // Update local form data with the response
+      setFormData({
+        name: updatedUser.name || "",
+        email: updatedUser.email || "",
+        meta: {
+          phoneNumber: updatedUser.meta?.phoneNumber || "",
+          department: updatedUser.meta?.department || "",
+          bio: updatedUser.meta?.bio || "",
+          avatarUrl: updatedUser.meta?.avatarUrl || "",
+        }
+      });
 
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
       setTimeout(() => setSuccess(""), 3000);
-      // gigga nigga in da building
-      // eslint-disable-next-line no-unused-vars
     } catch (err) {
+      console.error("Update error:", err);
       setError("Failed to update profile. Please try again.");
     } finally {
       setUpdating(false);
@@ -110,13 +128,16 @@ export default function Profile() {
   };
 
   const handleCancel = () => {
+    // Use the correct data structure from reduxUser
     setFormData({
       name: reduxUser?.name || "",
       email: reduxUser?.email || "",
-      phone: reduxUser?.phone || "",
-      department: reduxUser?.department || "",
-      bio: reduxUser?.bio || "",
-      avatar: reduxUser?.avatar || "",
+      meta: {
+        phoneNumber: reduxUser?.meta?.phoneNumber || "",
+        department: reduxUser?.meta?.department || "",
+        bio: reduxUser?.meta?.bio || "",
+        avatarUrl: reduxUser?.meta?.avatarUrl || "",
+      }
     });
     setIsEditing(false);
     setError("");
@@ -127,11 +148,19 @@ export default function Profile() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setFormData((prev) => ({ ...prev, avatar: e.target.result }));
+        setFormData((prev) => ({
+          ...prev,
+          meta: {
+            ...prev.meta,
+            avatarUrl: e.target.result
+          }
+        }));
       };
       reader.readAsDataURL(file);
     }
   };
+
+
 
   if (loading) {
     return (
@@ -224,9 +253,9 @@ export default function Profile() {
               <div className="text-center mb-6">
                 <div className="relative inline-block mb-4">
                   <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center overflow-hidden">
-                    {formData.avatar ? (
+                    {formData.meta?.avatarUrl ? (
                       <img
-                        src={formData.avatar}
+                        src={formData.meta.avatarUrl}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -363,14 +392,14 @@ export default function Profile() {
                   {isEditing ? (
                     <input
                       type="tel"
-                      name="phone"
-                      value={formData.phone}
+                      name="phoneNumber"  // Changed from "phone" to "phoneNumber"
+                      value={formData.meta?.phoneNumber || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                      {user.phone || "Not provided"}
+                      {user.meta?.phoneNumber || "Not provided"}
                     </div>
                   )}
                 </div>
@@ -384,13 +413,13 @@ export default function Profile() {
                     <input
                       type="text"
                       name="department"
-                      value={formData.department}
+                      value={formData.meta?.department || ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                      {user.department || "Not specified"}
+                      {user.meta?.department || "Not specified"}
                     </div>
                   )}
                 </div>
@@ -403,7 +432,7 @@ export default function Profile() {
                   {isEditing ? (
                     <textarea
                       name="bio"
-                      value={formData.bio}
+                      value={formData.meta?.bio || ""}
                       onChange={handleInputChange}
                       rows={4}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
@@ -411,7 +440,7 @@ export default function Profile() {
                     />
                   ) : (
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800 min-h-[120px]">
-                      {user.bio || "No bio provided yet."}
+                      {user.meta?.bio || "No bio provided yet."}
                     </div>
                   )}
                 </div>

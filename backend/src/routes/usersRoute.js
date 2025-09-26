@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/:id", requireAuth, requireTeacher, getUserById);
 
-router.put("/:id", requireAuth, updateUser);
+router.patch("/:id", requireAuth, updateUser);
 
 module.exports = router;

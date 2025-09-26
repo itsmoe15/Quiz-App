@@ -4,21 +4,23 @@ import LatexRenderer from "./LatexRenderer";
 export default function QuestionEditor({ questions, setQuestions }) {
   const [previewIndex, setPreviewIndex] = useState(null);
 
-  const addQuestion = () => {
-    setQuestions([
-      ...questions,
-      {
-        type: "mcq",
-        prompt: "",
-        options: [
-          { id: "a", text: "" },
-          { id: "b", text: "" },
-        ],
-        correctAnswer: "",
-        points: 1,
-      },
-    ]);
-  };
+  
+const addQuestion = () => {
+  setQuestions([
+    ...questions,
+    {
+      type: "mcq",
+      prompt: "",
+      options: [
+        { id: "A", text: "" },
+        { id: "B", text: "" },
+      ],
+      correctAnswer: "",
+      points: 1,
+    },
+  ]);
+};
+
 
   const updateQuestion = (index, field, value) => {
     const newQuestions = [...questions];
@@ -32,14 +34,15 @@ export default function QuestionEditor({ questions, setQuestions }) {
     setQuestions(newQuestions);
   };
 
-  const addOption = (qIndex) => {
-    const newQuestions = [...questions];
-    const nextId = String.fromCharCode(
-      97 + newQuestions[qIndex].options.length
-    );
-    newQuestions[qIndex].options.push({ id: nextId, text: "" });
-    setQuestions(newQuestions);
-  };
+const addOption = (qIndex) => {
+  const newQuestions = [...questions];
+  const nextId = String.fromCharCode(
+    65 + newQuestions[qIndex].options.length // 65 = "A"
+  );
+  newQuestions[qIndex].options.push({ id: nextId, text: "" });
+  setQuestions(newQuestions);
+};
+
 
   const removeQuestion = (index) => {
     setQuestions(questions.filter((_, i) => i !== index));
