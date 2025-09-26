@@ -22,7 +22,7 @@ export const getQuizzes = async () => {
 
 export const getQuizById = async (id) => {
   const res = await api.get(`/quizzes/${id}`);
-  return res.data;
+  return res.data.quiz ?? res.data;
 };
 
 export const publishQuiz = async (id) => {

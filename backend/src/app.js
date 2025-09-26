@@ -5,6 +5,7 @@ const attemptRouter = require("./routes/attemptRouter");
 const quizRouter = require("./routes/quizRouter");
 const resultsRoutes = require("./routes/resultsRouter");
 const analyticsRouter = require("./routes/analyticsRouter");
+const geminiRoutes = require("./routes/geminiRouter");
 
 const app = express();
 app.use(express.json());
@@ -26,5 +27,7 @@ app.use("/api/v1/attempts", attemptRouter);
 app.use("/api/v1/quizzes", quizRouter);
 app.use("/api/v1/quizzes", resultsRoutes);
 app.use("/api/v1", analyticsRouter);
+
+app.use("/api/v1", geminiRoutes);
 
 module.exports = app;
