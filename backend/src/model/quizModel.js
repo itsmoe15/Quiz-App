@@ -44,26 +44,23 @@ const quizSchema = new Schema(
       negativeForWrong: { type: Boolean, default: false },
       maxConfidencePoints: Number,
     },
-    joinUrl: { type: String }, // M&M: fml how didnt i add this before
+    joinUrl: { type: String }, 
     statistics: {
-      // Basic metrics
       totalAttempts: { type: Number, default: 0 },
       completedAttempts: { type: Number, default: 0 },
       averageScore: { type: Number, default: 0 },
-      averageAccuracy: { type: Number, default: 0 }, // Percentage of correct answers
+      averageAccuracy: { type: Number, default: 0 }, 
 
-      // Confidence metrics
       meanConfidence: { type: Number, default: 0 },
       confidenceAccuracyCorrelation: { type: Number, default: 0 },
 
-      // Question-level analytics
       questionStats: [
         {
           questionId: Schema.Types.ObjectId,
           attemptsCount: { type: Number, default: 0 },
           correctCount: { type: Number, default: 0 },
           averageConfidence: { type: Number, default: 0 },
-          discriminationIndex: { type: Number, default: 0 }, // How well question distinguishes strong/weak students
+          discriminationIndex: { type: Number, default: 0 }, 
           optionStats: [
             {
               optionId: String,
@@ -74,8 +71,7 @@ const quizSchema = new Schema(
         },
       ],
 
-      // Time-based metrics
-      averageCompletionTime: { type: Number, default: 0 }, // in minutes
+      averageCompletionTime: { type: Number, default: 0 }, 
       lastUpdated: { type: Date, default: Date.now },
     },
   },

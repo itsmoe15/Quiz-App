@@ -1,5 +1,3 @@
-// utils/scoring.js
-
 function normalizeString(str) {
   return typeof str === "string" ? str.trim().toLowerCase() : "";
 }

@@ -18,18 +18,7 @@ import TeacherAttemptsPage from "./pages/TeacherAttemptsPage";
 import Navbar from "./components/Navbar";
 import AnalyticsDashboard from "./pages/teacher/AnalyticsDashboard.jsx";
 import Profile from "./pages/teacher/Profile.jsx";
-
-/*
-        to say this code is more polluted than chernobyl would be an understatement
-        we have component files that are over 300 lines long
-        and half of them arent even used no more
-
-        its 4:55am and wakatime tells me i spent 14 hours and 26 mins acitvley coding on this project
-        so if u see any stupid mistakes (its most likely not mine) but if it was, forgive me
-
-        sorry in advance
-    - Montaser
-*/
+import { ToastContainer, Slide } from "react-toastify";
 
 export default function App() {
   const location = useLocation();
@@ -44,7 +33,19 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50">
       {/* Navbar*/}
       {!hideNavbar && <Navbar />}
-
+      <ToastContainer
+      position="bottom-right"
+      autoClose={2500}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="colored"
+      transition={Slide}
+      />
       <div
         className={`flex-1 w-full max-w-full mx-auto ${
           !hideNavbar ? "pt-24" : ""
@@ -153,16 +154,3 @@ export default function App() {
     </div>
   );
 }
-
-/**
- * Auth Flow Refactor — by Montaser
- *
- * We removed the old `AuthContext` (custom context + provider)
- * and replaced it fully with Redux for authentication state.
- *
- * - Auth state (user + token) now lives in `authSlice`.
- * - Login & Register pages dispatch `loginUser` / `registerUser` thunks.
- * - Token + user are persisted in `localStorage` inside the slice.
- * - Logout uses `dispatch(logout())`, which clears Redux state + storage.
- * - Navbar, dashboards, and protected routes all read from Redux (`state.auth`).
- */

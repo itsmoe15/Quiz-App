@@ -1,9 +1,9 @@
 import api from "./api";
 
-export const startAttempt = async (quizId) => {
-  const res = await api.post("/attempts/start", { quizId });
-  return res.data;
-};
+// export const startAttempt = async (quizId) => {
+//   const res = await api.post("/attempts/start", { quizId });
+//   return res.data;
+// };
 
 export const saveAttempt = async (attemptId, payload) => {
   const res = await api.post(`/attempts/${attemptId}/save`, payload);

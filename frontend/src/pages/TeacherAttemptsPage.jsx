@@ -1,8 +1,8 @@
-// frontend/src/pages/TeacherAttemptsPage.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAttemptsForQuiz } from "../services/attemptService";
 import { resultsService } from "../services/resultsService"; 
+import { toast, Slide } from "react-toastify";
 
 export default function TeacherAttemptsPage() {
   const { quizId } = useParams();
@@ -52,7 +52,17 @@ export default function TeacherAttemptsPage() {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("❌ Failed to download CSV:", err);
-      alert("Failed to download answer sheet. Please try again.");
+      toast.error('Failed to download answer sheet. Please try again.', {
+      position: "bottom-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+      });
     }
   };
 
@@ -172,10 +182,10 @@ export default function TeacherAttemptsPage() {
         ) : (
           <div className="space-y-4">
             {attempts.map((a) => {
-              console.log("👉 Single attempt object:", a); // 🔥 log each attempt individually
+              console.log("👉 Single attempt object:", a); 
 
               const student = a.studentInfo || {};
-              console.log("🧑 studentInfo:", student); // 🔥 log studentInfo explicitly
+              console.log("🧑 studentInfo:", student); 
 
               const studentName = student.name || "Unknown Student";
               const studentEmail = student.email || "";

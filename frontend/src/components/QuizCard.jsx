@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAttemptsForQuiz } from "../services/attemptService";
 import { publishQuiz } from "../services/quizService";
+import { toast, Slide } from "react-toastify";
 
 export default function QuizCard({ quiz = {}, role }) {
   const [attemptsCount, setAttemptsCount] = useState(null);
@@ -42,15 +43,45 @@ export default function QuizCard({ quiz = {}, role }) {
       const res = await publishQuiz(quiz._id); 
       if (res && res.quiz) {
         setPublished(true);
-        alert(res.message || "Quiz published");
+        toast.success('Quiz published', {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
       } else {
         setPublished(true);
-        alert("Quiz published");
+        toast.success('Quiz published', {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
       }
     } catch (err) {
       console.error("Publish failed:", err);
       const msg = err?.response?.data?.error || err?.message || "Publish failed";
-      alert(msg);
+      toast.error(msg, {
+      position: "bottom-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+      });
     } finally {
       setPublishing(false);
     }

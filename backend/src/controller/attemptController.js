@@ -1,56 +1,10 @@
-/*
-  this file is a shit show
-
-  anyway, all endpoints that have a public view 
-  variant are safe to be deleted except for:
-  // GET /api/v1/quizzes/:quizId/attempts <- which is used to get the quiz attempts for the teacher
-
-  and safe to delete here means its not being activly used by the frontend 
-  however it will break the backend so u need to swiftly remove the code and 
-  handle where its mentioned in other files, however its not actively used by
-  the frontend so it should be fine beside some reference errors so i will 
-  remove them and clean this file up later on
-- M&M
-*/
-
 const Attempt = require("../model/attemptModel");
 const Quiz = require("../model/quizModel");
 const mongoose = require("mongoose");
 const User = require("../model/userModel");
 const { calculateScoreForAnswer } = require("../utils/scoring");
 const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
-// -------------------- simple scoring 3: --------------------
 
-// function calculateScoreForAnswer(question, answer, settings) {
-//   const { confidence, selectedOptionId, typedAnswer } = answer;
-
-//   let isCorrect = false;
-//   if (question.type === "mcq") {
-//     isCorrect = question.correctAnswer === selectedOptionId;
-//   } else if (question.type === "short") {
-//     isCorrect =
-//       typedAnswer?.trim().toLowerCase() ===
-//       question.correctAnswer?.trim().toLowerCase();
-//   } else if (question.type === "numeric") {
-//     isCorrect = Number(typedAnswer) === Number(question.correctAnswer);
-//   }
-
-//   let pointsAwarded = 0;
-//   if (settings.scoringMode === "confidence_absolute") {
-//     if (isCorrect) {
-//       pointsAwarded = (confidence / 100) * question.points;
-//     } else if (settings.negativeForWrong) {
-//       pointsAwarded = -1 * (confidence / 100) * question.points;
-//     }
-//   } else if (settings.scoringMode === "binary") {
-//     pointsAwarded = isCorrect ? question.points : 0;
-//   }
-//   // yassmin will make more (funny)
-
-//   return { isCorrect, pointsAwarded };
-// }
-
-// -------------------- controllers fml --------------------
 
 // POST /api/v1/attempts/start
 exports.startAttempt = async (req, res) => {
@@ -60,7 +14,7 @@ exports.startAttempt = async (req, res) => {
     const quiz = await Quiz.findById(quizId);
     if (!quiz) return res.status(404).json({ error: "Quiz not found" });
 
-    let studentId = null; //this will be removed but im too sleepy to di it now and im suere it will break something
+    let studentId = null; 
     if (req.user && req.user.role === "student") {
       studentId = req.user.id;
     } else if (req.body.studentId) {
@@ -184,7 +138,7 @@ exports.submitAttempt = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// GET /api/v1/attempts/:attemptId <- so students can see where they made mistakes 👽
+// GET /api/v1/attempts/:attemptId
 exports.getAttemptById = async (req, res) => {
   try {
     const attempt = await Attempt.findById(req.params.attemptId)
@@ -219,7 +173,7 @@ exports.getAttemptById = async (req, res) => {
   }
 };
 
-// GET /api/v1/quizzes/:quizId/attempts <- pretty clear what this one is used for
+// GET /api/v1/quizzes/:quizId/attempts 
 exports.getAttemptsForQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -434,23 +388,3 @@ exports.getPublicAttempt = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// https://www.youtube.com/watch?v=suGI-LmoO7g
-// https://www.youtube.com/watch?v=ITo-WbpANi0
-/*
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣤⣤⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⣠⡶⠒⠒⠶⣄⣠⡴⠚⠉⠁⠀⠀⠀⠀⠀⠉⠙⠳⢦⡀⠀⠀⠀⠀⠀⠀
-    ⢠⡏⠀⠀⠀⠀⠘⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢧⡀⠀⠀⠀⠀
-    ⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⢱⠀⠀⢠⠉⢡⠀⠀⠀⠀⠀⠻⡄⠀⠀⠀
-    ⠀⣧⠀⠀⠀⠀⠀⠀⠀⠀⢸⣧⣾⠄⠀⢸⣦⣾⠀⠀⠀⠀⠀⠀⢻⡄⠀⠀
-    ⠀⠘⢧⡀⠀⠀⠀⠀⠀⠀⠈⣿⣿⠀⠀⠸⣿⡿⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀
-    ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠈⠁⡴⠶⡆⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠹⡄
-    ⠀⠀⠀⢷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠒⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷
-    ⠀⠀⠀⠸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠇
-    ⠀⠀⠀⣀⡿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡽⣿⡛⠁⠀
-    ⠀⣠⢾⣭⠀⠈⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠊⠀⢠⣝⣷⡀
-    ⢠⡏⠘⠋⠀⠀⠀⠈⠑⠦⣄⣀⠀⠀⠀⠀⠀⣀⡠⠔⠋⠀⠀⠀⠈⠛⠃⢻
-    ⠈⠷⣤⣀⣀⣀⣀⣀⣀⣀⣀⣤⡽⠟⠛⠿⣭⣄⣀⣀⣀⣀⣀⣀⣀⣀⣤⠞
-    ⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠀⠀⠀
-https://www.instagram.com/p/DKMP0kCtJGZ/
-*/

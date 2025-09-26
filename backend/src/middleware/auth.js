@@ -1,6 +1,3 @@
-// had to delete authMiddleware
-// my blood sweat and tears into it </3... and possibly other bodily fluids
-
 const jwt = require("jsonwebtoken");
 
 exports.requireAuth = (req, res, next) => {

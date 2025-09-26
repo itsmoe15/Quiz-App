@@ -12,8 +12,6 @@ const formatAttempt = (a) => ({
   submittedAt: a.submittedAt,
 });
 
-// GET all attempts for a quiz (teacher only)
-// GET all attempts for a quiz (teacher)
 exports.getQuizResults = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -88,9 +86,8 @@ exports.exportResults = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    // Fetch attempts (don't filter by status unless you want only submitted)
     const attempts = await Attempt.find({ quizId })
-      .populate("studentId", "name email studentId") // may or may not be populated
+      .populate("studentId", "name email studentId") 
       .populate("quizId", "title");
 
     if (!attempts.length)
@@ -140,7 +137,6 @@ exports.exportResults = async (req, res) => {
       });
       const csv = parser.parse(rows);
 
-      // Prepend BOM so Excel recognizes UTF-8 (fixes "â€”" rendering)
       const csvWithBOM = "\uFEFF" + csv;
 
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
@@ -151,7 +147,6 @@ exports.exportResults = async (req, res) => {
       return res.send(csvWithBOM);
     }
 
-    // Fallback: return JSON results for frontend usage
     res.json({ results: rows });
   } catch (err) {
     console.error("Export error:", err);

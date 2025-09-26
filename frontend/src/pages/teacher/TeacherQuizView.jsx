@@ -7,6 +7,7 @@ import {
 } from "../../services/quizService";
 import LatexRenderer from "../../components/LatexRenderer";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { toast, Slide } from "react-toastify";
 
 export default function TeacherQuizView() {
   const { id } = useParams();
@@ -31,7 +32,17 @@ export default function TeacherQuizView() {
       navigate("/teacher/quizzes");
     } catch (err) {
       console.error("Failed to delete quiz:", err);
-      alert("Failed to delete quiz. Please try again.");
+      toast.error("Failed to delete quiz. Please try again.", {
+      position: "bottom-right",
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Slide,
+      });
     }
   };
 
@@ -45,16 +56,46 @@ export default function TeacherQuizView() {
       const res = await publishQuiz(quiz._id);
       if (res && res.quiz) {
         setQuiz(res.quiz);
-        alert(res.message || "Quiz published");
+        toast.success('Quiz published', {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
       } else {
         setQuiz((q) => ({ ...q, published: true }));
-        alert("Quiz published");
+        toast.success('Quiz published', {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
       }
     } catch (err) {
       console.error("Publish failed:", err);
       const msg =
         err?.response?.data?.error || err?.message || "Publish failed";
-      alert(msg);
+        toast.error(msg, {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
     } finally {
       setPublishing(false);
     }
@@ -151,6 +192,7 @@ export default function TeacherQuizView() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-indigo-50 p-6 relative overflow-hidden">
+
       {/* Background Blobs */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
       <div className="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -250,9 +292,29 @@ export default function TeacherQuizView() {
                       onClick={async () => {
                         try {
                           await navigator.clipboard.writeText(quiz.joinUrl);
-                          alert("Join link copied to clipboard!");
+                          toast.success(`Join link copied to clipboard!`, {
+                          position: "bottom-right",
+                          autoClose: 2500,
+                          hideProgressBar: false,
+                          closeOnClick: false,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          theme: "colored",
+                          transition: Slide,
+                          });
                         } catch {
-                          alert("Copy failed, please copy manually.");
+                          toast.error('Copy failed, please copy manually.', {
+                          position: "bottom-right",
+                          autoClose: 2500,
+                          hideProgressBar: false,
+                          closeOnClick: false,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          theme: "colored",
+                          transition: Slide,
+                          });
                         }
                       }}
                       className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300 whitespace-nowrap"
@@ -289,7 +351,7 @@ export default function TeacherQuizView() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row flex-wrap gap-3 w-full lg:w-auto">
+            <div className={`flex flex-col gap-3 w-full lg:w-auto sm:grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3`}>
               <button
                 onClick={() => navigate(`/teacher/quizzes/${quiz._id}/edit`)}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
@@ -308,18 +370,14 @@ export default function TeacherQuizView() {
               )}
 
               <button
-                onClick={() =>
-                  navigate(`/teacher/quizzes/${quiz._id}/attempts`)
-                }
+                onClick={() => navigate(`/teacher/quizzes/${quiz._id}/attempts`)}
                 className="px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
               >
                 📊 View Answers
               </button>
 
               <button
-                onClick={() =>
-                  navigate(`/teacher/quizzes/${quiz._id}/analytics/summary`)
-                }
+                onClick={() => navigate(`/teacher/quizzes/${quiz._id}/analytics/summary`)}
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
               >
                 📈 Analytics

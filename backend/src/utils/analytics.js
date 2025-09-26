@@ -1,4 +1,3 @@
-// backend/src/utils/analytics.js
 const Quiz = require("../model/quizModel");
 
 class QuizAnalytics {

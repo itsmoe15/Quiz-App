@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */ //https://www.instagram.com/p/DOs22GJE_RF/ LMAAAAOOOOOOO 😭
-
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -8,6 +7,8 @@ import {
   submitPublicAttempt,
 } from "../services/attemptService";
 import LatexRenderer from "../components/LatexRenderer";
+import { toast, Slide } from "react-toastify";
+
 
 export default function PublicAttemptPlayer() {
   const { quizCode, attemptId } = useParams();
@@ -94,18 +95,46 @@ export default function PublicAttemptPlayer() {
           answers: answersArray,
         });
         if (res?.viewUrl) {
-          alert(
-            `Submitted! Your score: ${res.score}/${res.maxPossible}.\nYou can view full results after the exam ends at the provided link:\n\n${res.viewUrl}`
-          );
+          toast.success(`Submitted! Your score: ${res.score}/${res.maxPossible}.\nYou can view full results after the exam ends at the provided link:\n\n${res.viewUrl}`, {
+          position: "bottom-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+          });
           const path = new URL(res.viewUrl).pathname;
           navigate(path);
         } else {
-          alert(`Submitted! Score: ${res.score}/${res.maxPossible}`);
+          toast.success(`Submitted! Score: ${res.score}/${res.maxPossible}`, {
+          position: "bottom-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Slide,
+          });
           navigate("/");
         }
       } catch (err) {
         console.error(err);
-        alert(err?.response?.data?.error || err?.message || "Submit failed");
+        toast.error(err?.response?.data?.error || err?.message || "Submit failed", {
+        position: "bottom-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Slide,
+        });
       }
     }
   };

@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { customAlphabet } = require("nanoid");
 
-// -------------------- util 🦦 --------------------
 
-// each quiz will have a 7 digits code, the one used in the link and this functin makes them, as you can clearly see its not rocket science
+
+
 const alphabet =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // the lib is stupid we need to defien the alphabet to use it cuz the genius who made thoguht it wouldnt be needed to HARD CODE THE DAMN ALPHABET IN HIS LIBRARY
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; 
 const nanoid = customAlphabet(alphabet, 7);
 
 async function generateUniqueQuizCode() {
@@ -23,7 +23,6 @@ async function generateUniqueQuizCode() {
   return code;
 }
 
-// LaTeX validation so we dont hacked 😔✌
 function validateLatex(text) {
   if (typeof text !== "string") return false;
   const unsafePattern = /<[^>]*>|&lt;|&gt;|script/i;
@@ -57,12 +56,11 @@ exports.createQuiz = async (req, res) => {
         .json({ error: "Title and questions are required" });
     }
 
-    // Validate LaTeX in questions, we cant let our users get hacked, not on my watch ☝😔
     for (const q of questions) {
       if (!validateLatex(q.prompt)) {
         return res
           .status(400)
-          .json({ error: "Invalid characters in question prompt" }); // i need to remember to tell abdo to handel this in the frontend
+          .json({ error: "Invalid characters in question prompt" }); 
       }
       if (q.options) {
         for (const opt of q.options) {
@@ -88,12 +86,12 @@ exports.createQuiz = async (req, res) => {
       startAt,
       endAt,
       settings,
-      joinUrl, // M&M: shove it in the db too why not (this is used to show the link in the teacher edit form, not to fetch the quiz from the db im not this stupid)
+      joinUrl, 
     });
 
     res.status(201).json({
       quiz,
-      joinUrl, // M&M: idk if its used somewhere and im lazy to check, so we will still return separately for compatibility
+      joinUrl, 
     });
   } catch (err) {
     console.error(err);
@@ -195,7 +193,6 @@ exports.getQuizById = async (req, res) => {
     const now = new Date();
 
     if (req.user.role === "student") {
-      // again student should only view if published and within start/end 🦦
       if (
         !quiz.published ||
         (quiz.startAt && quiz.startAt > now) ||
@@ -211,7 +208,6 @@ exports.getQuizById = async (req, res) => {
       return res.json({ ...quiz.toObject(), questions: safeQuestions });
     }
 
-    // teacher sees full quiz <-- to be used in the view quiz for teachers by ebtesam or whomever th gonna code that part
     res.json(quiz);
   } catch (err) {
     console.error(err);
