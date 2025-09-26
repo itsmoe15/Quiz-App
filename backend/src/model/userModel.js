@@ -10,7 +10,10 @@ const userSchema = new mongoose.Schema({
   meta: {
     avatarUrl: String,
     bio: String,
+    phoneNumber: String,
+    department: String,
   },
 });
+
 
 module.exports = mongoose.model("User", userSchema);

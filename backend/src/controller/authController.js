@@ -9,8 +9,9 @@ const register = async (req, res) => {
     const { name, email, password, role, studentId } = req.body;
 
     const existing = await User.findOne({ email });
-    if (existing)
+    if (existing) {
       return res.status(400).json({ message: "Email already exists" });
+    }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -20,14 +21,24 @@ const register = async (req, res) => {
       passwordHash,
       role,
       studentId,
+      meta: null,
     });
 
     const token = generateToken(user._id, user.role);
+
     res.json({
       token,
-      user: { id: user._id, name: user.name, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        studentId: user.studentId || null,
+        meta: user.meta, 
+      },
     });
   } catch (err) {
+    console.error("❌ Register error:", err);
     res.status(500).json({ message: err.message });
   }
 };
