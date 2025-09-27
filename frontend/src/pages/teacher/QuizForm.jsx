@@ -6,8 +6,8 @@ import {
 } from "../../services/quizService";
 import { useNavigate, useParams } from "react-router-dom";
 import QuestionEditor from "../../components/QuestionEditor";
-import { useDropzone } from "react-dropzone"; // 👈 new
-import { generateQuizFromFile } from "../../services/gemini"; // 👈 new
+import { useDropzone } from "react-dropzone"; 
+import { generateQuizFromFile } from "../../services/gemini"; 
 
 function toLocalInput(iso) {
   if (!iso) return "";
@@ -39,10 +39,8 @@ export default function QuizForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 👉 New: AI loading state
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Load quiz for edit
 useEffect(() => {
   if (!id) return;
 
@@ -51,7 +49,7 @@ useEffect(() => {
     setLoading(true);
     setError("");
     try {
-      const quiz = await getQuizById(id); // <-- already normalized
+      const quiz = await getQuizById(id);
 
       if (!mounted) return;
       setTitle(quiz.title || "");
@@ -143,7 +141,6 @@ useEffect(() => {
     }
   };
 
-  // 👉 Dropzone handler
   const onDrop = useCallback(
     async (acceptedFiles) => {
       if (!acceptedFiles.length) return;
@@ -181,7 +178,7 @@ useEffect(() => {
         [".docx"],
       "text/plain": [".txt"],
     },
-    multiple: true, // allow multiple files
+    multiple: true, 
   });
 
   return (
@@ -236,10 +233,7 @@ useEffect(() => {
                 placeholder="Enter quiz description"
               />
             </div>
-
-            {/* 👉 Drag & Drop AI Generator */}
-            
-<div>
+          <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 AI Quiz Maker
               </label>
@@ -258,20 +252,17 @@ useEffect(() => {
                 </p>
               ) : (
                 <p className="text-gray-600">
-                  Drag & drop lecture files here, an our AI will make the questions for you
+                  Drag & drop lecture files here one by one, and our AI will make the questions for you
                 </p>
               )}
             </div>
-
-</div>
-            
+        </div>  
           </div>
         </div>
 
         {/* Questions Section */}
         <QuestionEditor questions={questions} setQuestions={setQuestions} />
 
-        {/* Schedule & Settings */}
         {/* Schedule & Settings */}
         <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-8 mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6">

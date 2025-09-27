@@ -1,6 +1,8 @@
 # Quiz-App
 
 Quiz-App is an advanced, AI-powered platform for creating, managing, and analyzing quizzes in educational settings. It empowers teachers to build engaging assessments, analyze student performance, and leverage data-driven insights, while providing students with a seamless quiz-taking experience and instant feedback.
+**[Live Demo](https://quizzapp.ftp.sh/)**
+
 ![](/images/laptop_mockup.png)
 
 ---
@@ -17,7 +19,6 @@ Quiz-App is an advanced, AI-powered platform for creating, managing, and analyzi
 - [License](#license)
 
 ---
-
 ## Features
 
 - **AI Quiz Generation:** Upload lecture files (PDF, DOCX, TXT) and let AI generate questions automatically using Gemini API.
