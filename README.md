@@ -9,14 +9,24 @@ Quiz-App is an advanced, AI-powered platform for creating, managing, and analyzi
 
 ## Table of Contents
 
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Folder Structure](#folder-structure)
-- [Contributing](#contributing)
-- [License](#license)
+- [Quiz-App](#quiz-app)
+	- [Table of Contents](#table-of-contents)
+	- [Features](#features)
+	- [Screenshots \& Highlights](#screenshots--highlights)
+		- [1. Teacher Dashboard](#1-teacher-dashboard)
+		- [2. Quiz Creation \& AI Generation](#2-quiz-creation--ai-generation)
+		- [3. Public Quiz Join](#3-public-quiz-join)
+		- [4. Student Quiz Attempt](#4-student-quiz-attempt)
+		- [5. Quiz Analytics \& Results](#5-quiz-analytics--results)
+	- [Tech Stack](#tech-stack)
+	- [Getting Started](#getting-started)
+		- [Prerequisites](#prerequisites)
+		- [Installation](#installation)
+	- [Usage](#usage)
+		- [For Teachers](#for-teachers)
+		- [For Students](#for-students)
+	- [Folder Structure](#folder-structure)
+	- [Contributing](#contributing)
 
 ---
 ## Features
@@ -40,7 +50,7 @@ Quiz-App is an advanced, AI-powered platform for creating, managing, and analyzi
 
 ## Screenshots & Highlights
 
-> _Add your own screenshots below each section for visual reference._
+<!-- > _Add your own screenshots below each section for visual reference._ -->
 
 ### 1. Teacher Dashboard
 
@@ -54,28 +64,33 @@ Quiz-App is an advanced, AI-powered platform for creating, managing, and analyzi
 
 - Manual question editor with support for LaTeX
 - Upload lecture files for instant AI-generated questions
-<!-- - [Add quiz creation/AI screenshot here] -->
+![](/images/quiz_creation.png)
 
-### 3. Student Quiz Attempt
+### 3. Public Quiz Join
+
+- Students join quizzes using a code
+- Optional PIN protection
+<!-- - [Add public join screenshot here] -->
+![](/images/student_attempt.png)
+
+
+### 4. Student Quiz Attempt
 
 - Simple interface for answering questions
 - Confidence slider for each answer
 - Real-time feedback on submission
-<!-- - [Add student attempt screenshot here] -->
+![](/images/quiz_attempt_inside.png)
 
-### 4. Quiz Analytics & Results
+### 5. Quiz Analytics & Results
 
 - Performance distribution charts
 - Confidence calibration graphs
 - Question-level breakdowns
 - Export results to CSV
 <!-- - [Add analytics/results screenshot here] -->
+![](/images/analytics.png)
 
-### 5. Public Quiz Join
 
-- Students join quizzes using a code
-- Optional PIN protection
-<!-- - [Add public join screenshot here] -->
 
 ---
 
